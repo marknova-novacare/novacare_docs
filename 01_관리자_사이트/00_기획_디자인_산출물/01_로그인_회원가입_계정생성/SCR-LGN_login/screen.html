@@ -195,67 +195,6 @@
   }
 
 
-  /* ── 테스트 계정 ── */
-  .hint-section {
-    margin-top: 20px;
-  }
-  .hint-toggle {
-    width: 100%;
-    background: var(--bg-light);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-base);
-    padding: 9px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.15s;
-    text-align: left;
-    font-family: inherit;
-  }
-  .hint-toggle:hover {
-    background: var(--bg-medium);
-  }
-  .hint-list {
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .hint-list.open {
-    display: flex;
-  }
-  .hint-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--border);
-    border-radius: var(--radius-base);
-    padding: 10px 12px;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.15s;
-    width: 100%;
-    font-family: inherit;
-  }
-  .hint-item:hover {
-    background: var(--bg-light);
-  }
-  .hint-role {
-    font-size: 12px;
-    font-weight: 700;
-  }
-  .hint-email {
-    font-size: 12px;
-    color: var(--text-primary);
-  }
-  .hint-desc {
-    font-size: 11px;
-    color: var(--text-dimed);
-  }
-
   /* ── 반응형 ── */
   @media (max-width: 480px) {
     .login-card {
@@ -298,14 +237,6 @@
       </div>
       <button type="submit" class="btn-primary" id="login-btn">로그인</button>
     </form>
-
-    <!-- 테스트 계정 -->
-    <div class="hint-section">
-      <button class="hint-toggle" onclick="toggleTestAccounts()">
-        <span id="hint-toggle-text">🔑 테스트 계정 보기 ▼</span>
-      </button>
-      <div class="hint-list" id="hint-list"></div>
-    </div>
 
   </div>
 </div>
@@ -417,39 +348,6 @@ function handleLogin(e) {
 }
 
 
-/* ══════════════════════════════════════
-   테스트 계정 토글
-   ══════════════════════════════════════ */
-function toggleTestAccounts() {
-  const list = document.getElementById('hint-list');
-  const text = document.getElementById('hint-toggle-text');
-  const isOpen = list.classList.toggle('open');
-  text.textContent = isOpen ? '🔑 테스트 계정 보기 ▲' : '🔑 테스트 계정 보기 ▼';
-}
-
-function fillTestAccount(email, password) {
-  document.getElementById('login-email').value = email;
-  document.getElementById('login-pw').value = password;
-  clearAlert('login-alert');
-  document.getElementById('hint-list').classList.remove('open');
-  document.getElementById('hint-toggle-text').textContent = '🔑 테스트 계정 보기 ▼';
-}
-
-/* 테스트 계정 목록 렌더링 */
-(function renderTestAccounts() {
-  const list = document.getElementById('hint-list');
-  TEST_ACCOUNTS.filter(a => a.status === 'active').forEach(acc => {
-    const btn = document.createElement('button');
-    btn.className = 'hint-item';
-    btn.style.borderLeftColor = acc.color;
-    btn.onclick = () => fillTestAccount(acc.email, acc.password);
-    btn.innerHTML =
-      `<span class="hint-role" style="color:${acc.color}">${acc.label}</span>` +
-      `<span class="hint-email">${acc.email}</span>` +
-      `<span class="hint-desc">${acc.name} / ${acc.password}</span>`;
-    list.appendChild(btn);
-  });
-})();
 
 </script>
 

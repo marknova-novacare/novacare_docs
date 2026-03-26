@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARKNOVA 통합 어드민 — CS담당자 기관생성</title>
+<style>
+/* ═══════════════════════════════════════
+   Reset & Root — 디자인시스템 v1.0
+   ═══════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{font-family:Pretendard,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;font-size:14px;color:#1a1a2e;background-color:#f0f2f5;-webkit-font-smoothing:antialiased}
+body{margin:0;min-height:100vh}
+
+/* ═══════════════════════════════════════
+   Sidebar
+   ═══════════════════════════════════════ */
+.sidebar{width:240px;min-width:240px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:0 20px;height:60px;border-bottom:1px solid #e2e8f0;flex-shrink:0}
+.sidebar-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#00E0A0,#00CDD4,#009CA1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
+.sidebar-brand{font-size:16px;font-weight:800;color:#191919;letter-spacing:.5px}
+.sidebar-role{font-size:12px;color:#6366f1;font-weight:600;margin-top:1px}
+.sidebar-nav{padding:16px 12px;flex:1;overflow-y:auto}
+.nav-section-label{font-size:12px;color:#94a3b8;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:0 10px;margin:8px 0 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;font-size:14px;color:#4b5563;cursor:pointer;transition:background .12s,color .12s;font-weight:500;margin-bottom:2px}
+.nav-item:hover{background:#f8fafc;color:#191919}
+.nav-item.active{background:rgba(0,184,132,.08);color:#00B884;font-weight:600}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sidebar-footer{padding:12px 16px 16px;border-top:1px solid #e2e8f0;flex-shrink:0}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:#f8fafc;margin-bottom:8px}
+.sidebar-avatar{width:32px;height:32px;background:linear-gradient(135deg,#00E0A0,#00CDD4,#009CA1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.sidebar-uname{font-size:13px;font-weight:600;color:#191919}
+.sidebar-uemail{font-size:12px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px}
+.logout-btn{width:100%;padding:8px;background:transparent;border:1px solid #e2e8f0;border-radius:7px;color:#64748b;font-size:13px;cursor:pointer;transition:all .12s;font-weight:500;font-family:inherit}
+.logout-btn:hover{background:#f8fafc;color:#191919}
+
+/* ═══════════════════════════════════════
+   Top Header
+   ═══════════════════════════════════════ */
+.top-header{height:60px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:50;flex-shrink:0}
+.header-title{font-size:15px;font-weight:700;color:#191919}
+.header-breadcrumb{font-size:13px;color:#94a3b8;margin-left:12px;font-weight:400}
+
+/* ═══════════════════════════════════════
+   Main Content
+   ═══════════════════════════════════════ */
+.main-wrapper{margin-left:240px;flex:1;display:flex;flex-direction:column;min-width:0}
+.main-content{flex:1;padding:24px 32px;overflow-y:auto;background:#f1f5f9}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.page-title{font-size:22px;font-weight:800;color:#191919}
+.page-sub{font-size:13px;color:#64748b;margin-top:4px}
+
+/* ═══════════════════════════════════════
+   List Container
+   ═══════════════════════════════════════ */
+.list-container{background:#fff;border-radius:14px;box-shadow:0 1px 4px #0000000f;border:1px solid #f1f5f9;overflow:hidden}
+.list-toolbar{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #f1f5f9;gap:12px}
+.search-wrap{display:flex;align-items:center;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:0 12px;gap:8px;flex:1;max-width:360px;transition:border-color .2s}
+.search-wrap:focus-within{border-color:#00B884;background:#fff}
+.search-input{border:none;background:transparent;font-size:14px;color:#1a1a2e;padding:9px 0;outline:none;width:100%;font-family:inherit}
+.search-input::placeholder{color:#b0b8c4}
+.search-clear{background:none;border:none;color:#94a3b8;font-size:18px;cursor:pointer;padding:0 2px;line-height:1;display:none}
+.search-clear.show{display:block}
+.list-count{font-size:13px;color:#64748b;white-space:nowrap}
+
+/* ═══════════════════════════════════════
+   Table
+   ═══════════════════════════════════════ */
+.table-wrap{overflow-x:auto}
+.inst-table{width:100%;border-collapse:collapse;font-size:13px}
+.inst-table thead tr{background:#f8fafc}
+.inst-table th{padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #e2e8f0;white-space:nowrap}
+.inst-table td{padding:14px 16px;border-bottom:1px solid #f1f5f9;color:#1e293b;vertical-align:middle}
+.inst-table tbody tr:last-child td{border-bottom:none}
+.inst-table tbody tr:hover{background:#fafbfc}
+.inst-name{font-weight:600;color:#191919}
+.inst-breadcrumb{font-size:12px;color:#94a3b8;margin-bottom:3px;line-height:1.4}
+.table-empty{text-align:center;padding:48px;color:#94a3b8;font-size:14px}
+.row-toggle{cursor:pointer}.row-toggle:hover{background:#f8fafc}
+.tog{display:inline-block;width:18px;font-size:11px;color:#94a3b8;transition:transform .2s;text-align:center}
+.tog.open{transform:rotate(90deg);color:#00B884}
+.sub-count{font-size:11px;color:#94a3b8;margin-left:4px}
+.row-t2{background:#f8fafc}.row-t2 td{border-bottom-color:#eef1f6}
+.row-t3{background:#f1f5f9}.row-t3 td{border-bottom-color:#e6e9ef}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:center;gap:4px;padding:16px 20px;border-top:1px solid #f1f5f9}
+.page-btn{min-width:32px;height:32px;padding:0 8px;border:1px solid #e2e8f0;border-radius:6px;background:#fff;font-size:13px;color:#475569;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;justify-content:center}
+.page-btn:hover{background:#f8fafc;border-color:#94a3b8}
+.page-btn.active{background:#00B884;border-color:#00B884;color:#fff;font-weight:700}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+.page-info{font-size:12px;color:#94a3b8;margin:0 8px}
+
+/* Badges */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.badge-active{background:#dcfce7;color:#16a34a}
+.badge-warning{background:#fef9c3;color:#b45309}
+.badge-expired{background:#fee2e2;color:#dc2626}
+.badge-tier{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700;margin-right:4px}
+.badge-tier.t1{background:#ede9fe;color:#7c3aed}
+.badge-tier.t2{background:#e0f2fe;color:#0369a1}
+/* t3 removed — 1차/2차만 지원 */
+
+/* Buttons */
+.btn-primary{padding:10px 20px;background:linear-gradient(135deg,#00E0A0,#00CDD4,#009CA1);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:opacity .2s}
+.btn-primary:hover{opacity:.88}
+.btn-submit{padding:10px 26px;background:linear-gradient(135deg,#00E0A0,#00CDD4,#009CA1);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;font-family:inherit}
+.btn-submit:hover{opacity:.88}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.btn-cancel{padding:10px 22px;background:#f1f5f9;border:none;border-radius:8px;color:#64748b;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;font-family:inherit}
+.btn-cancel:hover{background:#e2e8f0}
+.btn-danger{padding:11px 22px;background:#dc2626;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;font-family:inherit}
+.btn-danger:hover{background:#b91c1c}
+.btn-danger:disabled{opacity:.5;cursor:not-allowed}
+.btn-edit{padding:5px 12px;background:#eff6ff;color:#00B884;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-right:6px;transition:opacity .15s;font-family:inherit}
+.btn-edit:hover{background:#dbeafe}
+.btn-delete{padding:5px 12px;background:#fef2f2;color:#dc2626;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s;font-family:inherit}
+.btn-delete:hover{background:#fee2e2}
+.td-actions{display:flex;gap:4px;flex-wrap:nowrap;white-space:nowrap}
+
+/* ═══════════════════════════════════════
+   Modal
+   ═══════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:#1919198c;backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:16px;width:100%;max-width:870px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px #00000040}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 28px 18px;border-bottom:1px solid #f1f5f9;flex-shrink:0}
+.modal-header h2{font-size:18px;font-weight:800;color:#191919}
+.modal-close{background:none;border:none;font-size:22px;color:#94a3b8;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1}
+.modal-close:hover{background:#f1f5f9;color:#475569}
+.modal-scroll{flex:1;overflow-y:auto;padding:24px 28px}
+.modal-footer{display:flex;justify-content:center;gap:10px;padding:16px 28px 22px;border-top:1px solid #f1f5f9;flex-shrink:0}
+
+/* Confirm modal */
+.confirm-box{background:#fff;border-radius:16px;width:100%;max-width:550px;padding:32px 28px 28px;text-align:center;box-shadow:0 24px 80px #00000040}
+.confirm-icon{font-size:36px;margin-bottom:12px}
+.confirm-title{font-size:18px;font-weight:800;color:#191919;margin-bottom:10px}
+.confirm-desc{font-size:14px;color:#475569;line-height:1.6;margin-bottom:20px}
+.confirm-desc strong{color:#dc2626}
+.confirm-warning{background:#fef9c3;border:1px solid #fcd34d;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:#92400e;font-weight:500;text-align:left}
+.confirm-footer{display:flex;justify-content:center;gap:10px}
+.confirm-footer .btn-cancel,.confirm-footer .btn-danger{flex:1;padding:11px}
+
+/* ═══════════════════════════════════════
+   Form
+   ═══════════════════════════════════════ */
+.section-title{font-size:13px;font-weight:700;color:#1e3a5f;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #eff6ff;padding-bottom:8px;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.section-note{font-size:12px;color:#94a3b8;font-weight:500;text-transform:none;letter-spacing:0}
+.form-row{margin-bottom:16px}
+.form-row.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:12px;font-weight:700;color:#374151}
+.required{color:#ef4444;margin-left:2px}
+.form-group input,.form-group textarea,.form-group select{padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:13px;color:#1a1a2e;background:#f8fafc;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;resize:vertical}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#00B884;box-shadow:0 0 0 3px #00B88414;background:#fff}
+.form-group input::placeholder,.form-group textarea::placeholder{color:#c4cdd6}
+.form-group input:disabled,.form-group select:disabled{background:#f1f5f9;color:#94a3b8;cursor:not-allowed}
+input[type="date"]::-webkit-calendar-picker-indicator{width:18px;height:18px;cursor:pointer}
+.form-group.has-error input,.form-group.has-error select,.form-group.has-error textarea{border-color:#ef4444;background:#fff5f5}
+.error-msg{font-size:12px;color:#ef4444;font-weight:500;display:none}
+.error-msg.show{display:block}
+.path-banner{padding:10px 14px;border-radius:8px;background:#f0f6ff;border:1px solid #dbeafe;font-size:13px;color:#1e40af;margin-bottom:20px}
+
+/* Tier 선택 영역 */
+.tier-select-wrap{margin-bottom:20px;padding:16px 18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px}
+.tier-select-wrap .form-row{margin-bottom:12px}
+.tier-select-wrap .form-row:last-child{margin-bottom:0}
+
+/* 검색 가능 선택 (custom searchable select) */
+.searchable-select{position:relative}
+.searchable-select input{width:100%}
+.ss-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #e2e8f0;border-radius:7px;max-height:200px;overflow-y:auto;z-index:10;display:none;box-shadow:0 8px 32px rgba(0,0,0,.12);margin-top:4px}
+.ss-dropdown.open{display:block}
+.ss-item{padding:9px 12px;font-size:13px;cursor:pointer;color:#1e293b;transition:background .1s}
+.ss-item:hover{background:#f0fdf4;color:#00B884}
+.ss-item .ss-path{font-size:11px;color:#94a3b8;display:block;margin-top:2px}
+.ss-empty{padding:12px;font-size:13px;color:#94a3b8;text-align:center}
+
+/* Toast */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);padding:14px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:10000;animation:toast-in .3s ease;max-width:440px;white-space:nowrap}
+.toast-success{background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0}
+.toast-error{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}
+@keyframes toast-in{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Sidebar -->
+<!-- ═══════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">M</div>
+    <div>
+      <div class="sidebar-brand">MARKNOVA</div>
+      <div class="sidebar-role">CS 담당자</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">관리</div>
+    <div class="nav-item"><span class="nav-icon">🏠</span><span>대시보드</span></div>
+    <div class="nav-item active"><span class="nav-icon">🏢</span><span>기관관리</span></div>
+    <div class="nav-item"><span class="nav-icon">👤</span><span>계정 관리</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">박</div>
+      <div>
+        <div class="sidebar-uname">박CS</div>
+        <div class="sidebar-uemail">cs@marknova.co.kr</div>
+      </div>
+    </div>
+    <button class="logout-btn">로그아웃</button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Main -->
+<!-- ═══════════════════════════════════════ -->
+<div class="main-wrapper">
+  <header class="top-header">
+    <div style="display:flex;align-items:center">
+      <span class="header-title">MARKNOVA</span>
+      <span class="header-breadcrumb"> › 기관관리</span>
+    </div>
+    <button class="logout-btn" style="width:auto;padding:7px 14px">로그아웃</button>
+  </header>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">기관관리</div>
+        <div class="page-sub">등록된 전체 기관 목록을 관리합니다.</div>
+      </div>
+      <button class="btn-primary" onclick="openCreateModal()">+ 기관 신규생성</button>
+    </div>
+
+    <!-- 기관 리스트 -->
+    <div class="list-container">
+      <div class="list-toolbar">
+        <div class="search-wrap">
+          <span>🔍</span>
+          <input class="search-input" id="org-search" placeholder="기관명 검색" oninput="renderOrgList()">
+          <button class="search-clear" id="org-search-clear" onclick="document.getElementById('org-search').value='';renderOrgList()">✕</button>
+        </div>
+        <span class="list-count" id="org-count"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="inst-table">
+          <thead><tr>
+            <th style="width:50px">#</th>
+            <th>기관명</th>
+            <th>서비스 시작일</th>
+            <th>서비스 종료일</th>
+            <th style="width:70px">사용자</th>
+            <th style="width:90px">상태</th>
+            <th style="width:120px">관리</th>
+          </tr></thead>
+          <tbody id="org-tbody"></tbody>
+        </table>
+      </div>
+      <div class="table-empty" id="org-empty" style="display:none"></div>
+      <div class="pagination" id="org-pagination"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Modal: 기관 신규생성 / 수정 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-create" onclick="if(event.target===this)closeModal('modal-create')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="modal-create-title">기관 신규생성</h2>
+      <button class="modal-close" onclick="closeModal('modal-create')">✕</button>
+    </div>
+    <div class="modal-scroll">
+      <!-- 경로 배너 (수정 시) -->
+      <div class="path-banner" id="modal-path" style="display:none"></div>
+
+      <!-- 기관 등급 + 상위 기관 선택 -->
+      <div class="tier-select-wrap" id="tier-wrap">
+        <div class="form-row">
+          <div class="form-group">
+            <label>기관 등급 <span class="required">*</span></label>
+            <select id="f-tier" onchange="onTierChange()">
+              <option value="1">1차 기관</option>
+              <option value="2">2차 기관</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row" id="parent-row" style="display:none">
+          <div class="form-group" id="fg-parent">
+            <label>상위 기관 <span class="required">*</span></label>
+            <div class="searchable-select">
+              <input id="f-parent-search" placeholder="상위 기관 검색" autocomplete="off"
+                     oninput="filterParentList()" onfocus="openParentDropdown()" onclick="openParentDropdown()">
+              <input type="hidden" id="f-parent-id">
+              <div class="ss-dropdown" id="parent-dropdown"></div>
+            </div>
+            <span class="error-msg" id="err-parent"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 기관 정보 -->
+      <div class="section-title">기관 정보</div>
+      <div class="form-row">
+        <div class="form-group" id="fg-orgname">
+          <label>기관명 <span class="required">*</span></label>
+          <input id="f-orgname" placeholder="기관명 입력 (한글, 영문, 숫자 가능)" oninput="clearErr('fg-orgname')">
+          <span class="error-msg" id="err-orgname"></span>
+        </div>
+      </div>
+      <!-- 전 등급 공통 필드 -->
+      <div id="tier1-fields">
+        <div class="form-row two-col">
+          <div class="form-group" id="fg-start">
+            <label>서비스 시작일 <span class="required">*</span></label>
+            <input type="date" id="f-start" oninput="clearErr('fg-start')">
+            <span class="error-msg" id="err-start"></span>
+          </div>
+          <div class="form-group" id="fg-end">
+            <label>서비스 종료일 <span class="required">*</span></label>
+            <input type="date" id="f-end" oninput="clearErr('fg-end')">
+            <span class="error-msg" id="err-end"></span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>계약조건</label>
+            <textarea id="f-contract" placeholder="계약조건을 입력해주세요" rows="4"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>사용자 수</label>
+            <input type="number" id="f-users" min="0" value="0" style="max-width:160px">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-create')">취소</button>
+      <button class="btn-submit" id="modal-create-btn" onclick="handleCreate()">기관 생성</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Modal: 기관 삭제 확인 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-delete" onclick="if(event.target===this)closeModal('modal-delete')">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title">기관 삭제</div>
+    <div class="confirm-warning" id="del-warning" style="display:none">하위기관이 있어 삭제할 수 없습니다. 하위기관을 먼저 삭제해주세요.</div>
+    <div class="confirm-desc" id="del-desc"></div>
+    <div class="confirm-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-delete')">취소</button>
+      <button class="btn-danger" id="del-btn" onclick="handleDelete()">삭제</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Modal: 기관 생성 완료 확인 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-confirm-create">
+  <div class="confirm-box">
+    <div class="confirm-icon">✅</div>
+    <div class="confirm-title">기관이 생성되었습니다</div>
+    <div class="confirm-desc">기관관리자 계정을 생성할까요?</div>
+    <div class="confirm-footer">
+      <button class="btn-cancel" style="flex:1" onclick="closeModal('modal-confirm-create')">아니요</button>
+      <button class="btn-submit" style="flex:1" onclick="goToAccountCreate()">계정 생성하기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   Data
+   ══════════════════════════════════════ */
+let nextId = 100;
+const orgs = [];
+
+/* ══════════════════════════════════════
+   Helpers
+   ══════════════════════════════════════ */
+const getOrg = id => orgs.find(o => o.id === id);
+const getOrgName = id => { const o = getOrg(id); return o ? o.name : ''; };
+const hasChild = id => orgs.some(o => o.parentId === id);
+const kids = pid => orgs.filter(o => o.parentId === pid).sort((a,b) => a.id - b.id);
+const descCnt = id => { let n = 0; kids(id).forEach(c => { n++; n += descCnt(c.id); }); return n; };
+
+function getPath(org) {
+  const p = [];
+  let c = org;
+  while (c.parentId) { const par = getOrg(c.parentId); if (!par) break; p.unshift(par.name); c = par; }
+  return p.join(' › ');
+}
+
+function tierBadge(t) { return `<span class="badge-tier t${t}">${t}차</span>`; }
+
+function statusBadge(o) {
+  if (!o.end) return '-';
+  const d = Math.ceil((new Date(o.end) - new Date(new Date().toDateString())) / 864e5);
+  if (d < 0) return '<span class="badge badge-expired">만료</span>';
+  if (d <= 30) return '<span class="badge badge-warning">만료 임박</span>';
+  return '<span class="badge badge-active">활성</span>';
+}
+
+function toast(msg, type) {
+  const d = document.createElement('div');
+  d.className = `toast toast-${type}`;
+  d.textContent = msg;
+  document.body.appendChild(d);
+  setTimeout(() => { d.style.opacity='0'; d.style.transition='opacity .3s'; setTimeout(()=>d.remove(),300); }, 3000);
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+/* ══════════════════════════════════════
+   기관 리스트 (1차 아코디언 + 페이지네이션)
+   ══════════════════════════════════════ */
+const PAGE_SIZE = 10;
+let currentPage = 1;
+const opened = new Set();
+
+function tog(id) { opened.has(id) ? opened.delete(id) : opened.add(id); renderOrgList(); }
+function goPage(p) { currentPage = p; opened.clear(); renderOrgList(); }
+
+/* 모든 하위기관(2차) 플랫 리스트 */
+function allDescendants(pid) {
+  return kids(pid);
+}
+
+function orgRow(o, idx, cls, pad) {
+  const ch = descCnt(o.id), on = opened.has(o.id);
+  /* 1차만 아코디언 토글 */
+  const isRoot = o.tier === 1;
+  const arrow = (isRoot && ch) ? `<span class="tog${on?' open':''}">▶</span>` : '';
+  const cnt = (isRoot && ch) ? `<span class="sub-count">(${ch})</span>` : '';
+  const click = (isRoot && ch) ? `onclick="tog(${o.id})"` : '';
+  const path = getPath(o);
+  const breadcrumb = path ? `<div class="inst-breadcrumb">${path} ›</div>` : '';
+
+  return `<tr class="${cls}${(isRoot && ch)?' row-toggle':''}" ${click}>
+    <td style="color:#94a3b8">${idx}</td>
+    <td style="padding-left:${pad}px">
+      <div style="display:flex;align-items:center;gap:4px">${arrow}
+        <div>${breadcrumb}<div class="inst-name">${tierBadge(o.tier)} ${o.name}${cnt}</div></div>
+      </div>
+    </td>
+    <td>${o.start || '-'}</td>
+    <td>${o.end || '-'}</td>
+    <td style="font-weight:700;color:#374151">${o.users != null ? o.users.toLocaleString() : '-'}</td>
+    <td>${statusBadge(o)}</td>
+    <td><div class="td-actions" onclick="event.stopPropagation()">
+      <button class="btn-edit" onclick="openEditModal(${o.id})">수정</button>
+      <button class="btn-delete" onclick="openDeleteModal(${o.id})">삭제</button>
+    </div></td></tr>`;
+}
+
+function renderPagination(totalRoots) {
+  const totalPages = Math.ceil(totalRoots / PAGE_SIZE);
+  const pg = document.getElementById('org-pagination');
+  if (totalPages <= 1) { pg.innerHTML = ''; return; }
+
+  let h = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>‹</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    h += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  h += `<span class="page-info">${currentPage}/${totalPages}</span>`;
+  h += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages?'disabled':''}>›</button>`;
+  pg.innerHTML = h;
+}
+
+function renderOrgList() {
+  const q = (document.getElementById('org-search').value || '').trim();
+  const roots = orgs.filter(o => !o.parentId).sort((a,b) => a.id - b.id);
+  const fr = q ? roots.filter(r => [r,...allDescendants(r.id)].some(o => o.name.includes(q))) : roots;
+
+  document.getElementById('org-search-clear').classList.toggle('show', q.length > 0);
+  document.getElementById('org-count').textContent = `총 ${orgs.length}개 (1차 ${roots.length}개)`;
+  const tbody = document.getElementById('org-tbody'), empty = document.getElementById('org-empty');
+
+  if (!fr.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    empty.textContent = q ? `'${q}' 검색 결과가 없습니다.` : '등록된 기관이 없습니다.';
+    document.getElementById('org-pagination').innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  /* 검색 중이면 페이지네이션 해제, 아니면 페이징 */
+  const paged = q ? fr : fr.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+  if (currentPage > Math.ceil(fr.length/PAGE_SIZE)) { currentPage = 1; }
+
+  let h = '';
+  paged.forEach((r, i) => {
+    const num = q ? (i+1) : ((currentPage-1)*PAGE_SIZE + i + 1);
+    h += orgRow(r, num, '', 16);
+    /* 1차 펼치면 2차 표시 */
+    if (opened.has(r.id) || q) {
+      allDescendants(r.id).forEach(sub => {
+        if (q && !sub.name.includes(q)) return;
+        h += orgRow(sub, '', 'row-t2', 40);
+      });
+    }
+  });
+  tbody.innerHTML = h;
+  renderPagination(q ? 0 : fr.length);
+}
+
+/* ══════════════════════════════════════
+   모달: 등급 변경 + 상위 기관 선택
+   ══════════════════════════════════════ */
+function onTierChange() {
+  const tier = parseInt(document.getElementById('f-tier').value);
+  const parentRow = document.getElementById('parent-row');
+
+  // 상위 기관 선택 영역
+  parentRow.style.display = tier === 1 ? 'none' : '';
+
+  // 상위 기관 초기화
+  document.getElementById('f-parent-search').value = '';
+  document.getElementById('f-parent-id').value = '';
+  clearErr('fg-parent');
+
+  // 상위 기관 목록 없으면 에러
+  if (tier === 2 && orgs.filter(o => o.tier === 1).length === 0) {
+    showErr('fg-parent', '1차 기관이 없습니다. 1차 기관을 먼저 생성해주세요.');
+  }
+}
+
+function getParentCandidates() {
+  const tier = parseInt(document.getElementById('f-tier').value);
+  if (tier === 2) return orgs.filter(o => o.tier === 1);
+  return [];
+}
+
+function filterParentList() {
+  const q = document.getElementById('f-parent-search').value.trim().toLowerCase();
+  const list = getParentCandidates();
+  const dd = document.getElementById('parent-dropdown');
+  const filtered = q ? list.filter(o => o.name.toLowerCase().includes(q)) : list;
+
+  if (!filtered.length) {
+    dd.innerHTML = '<div class="ss-empty">일치하는 기관이 없습니다</div>';
+  } else {
+    dd.innerHTML = filtered.map(o => {
+      const path = getPath(o);
+      return `<div class="ss-item" onclick="selectParent(${o.id})">
+        ${tierBadge(o.tier)} ${o.name}
+        ${path ? `<span class="ss-path">${path}</span>` : ''}
+      </div>`;
+    }).join('');
+  }
+  dd.classList.add('open');
+  // 선택 해제
+  document.getElementById('f-parent-id').value = '';
+  clearErr('fg-parent');
+}
+
+function openParentDropdown() {
+  /* 이미 선택된 상태면 검색어 비우고 전체 목록 노출 */
+  const input = document.getElementById('f-parent-search');
+  if (document.getElementById('f-parent-id').value) {
+    input.value = '';
+    document.getElementById('f-parent-id').value = '';
+  }
+  input.select();
+  filterParentList();
+}
+
+function selectParent(id) {
+  const o = getOrg(id);
+  if (!o) return;
+  document.getElementById('f-parent-search').value = o.name;
+  document.getElementById('f-parent-id').value = id;
+  document.getElementById('parent-dropdown').classList.remove('open');
+  clearErr('fg-parent');
+}
+
+// 드롭다운 외부 클릭 시 닫기
+document.addEventListener('click', e => {
+  if (!e.target.closest('.searchable-select')) {
+    document.getElementById('parent-dropdown').classList.remove('open');
+  }
+});
+
+/* ══════════════════════════════════════
+   모달: 생성 / 수정
+   ══════════════════════════════════════ */
+let editId = null, deleteId = null;
+
+function resetForm() {
+  ['f-orgname','f-start','f-end','f-contract'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('f-users').value = '0';
+  document.getElementById('f-tier').value = '1';
+  document.getElementById('f-tier').disabled = false;
+  document.getElementById('f-parent-search').value = '';
+  document.getElementById('f-parent-id').value = '';
+  document.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
+  document.querySelectorAll('.error-msg').forEach(e => { e.textContent = ''; e.classList.remove('show'); });
+  document.getElementById('modal-path').style.display = 'none';
+  document.getElementById('tier-wrap').style.display = '';
+  onTierChange();
+}
+
+function openCreateModal() {
+  editId = null;
+  resetForm();
+  document.getElementById('modal-create-title').textContent = '기관 신규생성';
+  document.getElementById('modal-create-btn').textContent = '기관 생성';
+  document.getElementById('modal-create-btn').onclick = handleCreate;
+  openModal('modal-create');
+}
+
+function openEditModal(id) {
+  editId = id;
+  resetForm();
+  const o = getOrg(id); if (!o) return;
+
+  document.getElementById('modal-create-title').textContent = '기관 수정';
+  document.getElementById('modal-create-btn').textContent = '수정 완료';
+  document.getElementById('modal-create-btn').onclick = handleEdit;
+
+  // 등급/상위기관 수정 불가
+  document.getElementById('f-tier').value = o.tier;
+  document.getElementById('f-tier').disabled = true;
+  if (o.parentId) {
+    document.getElementById('f-parent-search').value = getOrgName(o.parentId);
+    document.getElementById('f-parent-id').value = o.parentId;
+  }
+  onTierChange();
+
+  // 기관 정보 (전 등급 공통)
+  document.getElementById('f-orgname').value = o.name;
+  document.getElementById('f-start').value = o.start || '';
+  document.getElementById('f-end').value = o.end || '';
+  document.getElementById('f-contract').value = o.contract || '';
+  document.getElementById('f-users').value = o.users || 0;
+
+  // 경로 배너
+  const path = getPath(o);
+  const banner = document.getElementById('modal-path');
+  if (path) {
+    banner.innerHTML = `기관 위치: ${path} › <strong>${o.name}</strong>`;
+    banner.style.display = '';
+  }
+
+  openModal('modal-create');
+}
+
+/* ══════════════════════════════════════
+   검증
+   ══════════════════════════════════════ */
+function showErr(groupId, msg) {
+  const g = document.getElementById(groupId);
+  const e = document.getElementById(groupId.replace('fg-','err-'));
+  if (g) g.classList.add('has-error');
+  if (e) { e.textContent = msg; e.classList.add('show'); }
+}
+
+function clearErr(groupId) {
+  const g = document.getElementById(groupId);
+  const e = document.getElementById(groupId.replace('fg-','err-'));
+  if (g) g.classList.remove('has-error');
+  if (e) { e.textContent = ''; e.classList.remove('show'); }
+}
+
+function clearAllErr() {
+  document.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
+  document.querySelectorAll('.error-msg').forEach(e => { e.textContent = ''; e.classList.remove('show'); });
+}
+
+function validate(isEdit) {
+  clearAllErr();
+  const tier = parseInt(document.getElementById('f-tier').value);
+  const parentId = parseInt(document.getElementById('f-parent-id').value) || null;
+  const name = document.getElementById('f-orgname').value.trim();
+
+  // 2차: 상위 기관 검증
+  if (tier === 2 && !isEdit) {
+    if (orgs.filter(o => o.tier === 1).length === 0) {
+      showErr('fg-parent', '1차 기관이 없습니다. 1차 기관을 먼저 생성해주세요.'); return false;
+    }
+    if (!parentId) { showErr('fg-parent', '상위 기관을 선택해주세요.'); return false; }
+  }
+
+  // 기관명
+  if (!name) { showErr('fg-orgname', '기관명을 입력해주세요.'); return false; }
+  if (orgs.find(o => o.name === name && (!isEdit || o.id !== editId))) {
+    showErr('fg-orgname', '이미 등록된 기관명입니다.'); return false;
+  }
+
+  // 전 등급 공통: 날짜
+  const start = document.getElementById('f-start').value;
+  const end = document.getElementById('f-end').value;
+  if (!start) { showErr('fg-start', '서비스 시작일을 입력해주세요.'); return false; }
+  if (!end) { showErr('fg-end', '서비스 종료일을 입력해주세요.'); return false; }
+  if (end < start) { showErr('fg-end', '종료일이 시작일보다 빠를 수 없습니다.'); return false; }
+
+  return true;
+}
+
+/* ══════════════════════════════════════
+   생성 / 수정 / 삭제
+   ══════════════════════════════════════ */
+function handleCreate() {
+  if (!validate(false)) return;
+  const tier = parseInt(document.getElementById('f-tier').value);
+  const parentId = parseInt(document.getElementById('f-parent-id').value) || null;
+  const name = document.getElementById('f-orgname').value.trim();
+
+  const newOrg = {
+    id: nextId++, name, tier, parentId,
+    start: document.getElementById('f-start').value,
+    end: document.getElementById('f-end').value,
+    contract: document.getElementById('f-contract').value.trim(),
+    users: parseInt(document.getElementById('f-users').value) || 0,
+  };
+
+  orgs.push(newOrg);
+  closeModal('modal-create');
+  renderOrgList();
+  openModal('modal-confirm-create');
+}
+
+function goToAccountCreate() {
+  closeModal('modal-confirm-create');
+  /* 실제 환경에서는 계정 생성 화면(SCR-ACC)으로 이동 + 해당 기관 사전 선택 */
+  window.location.href = '../계정생성/SCR-ACC_CS담당자_계정생성_화면구현.html';
+}
+
+function handleEdit() {
+  if (!validate(true)) return;
+  const o = getOrg(editId); if (!o) return;
+  o.name = document.getElementById('f-orgname').value.trim();
+  o.start = document.getElementById('f-start').value;
+  o.end = document.getElementById('f-end').value;
+  o.contract = document.getElementById('f-contract').value.trim();
+  o.users = parseInt(document.getElementById('f-users').value) || 0;
+
+  closeModal('modal-create');
+  renderOrgList();
+  toast('기관 정보가 수정되었습니다.', 'success');
+}
+
+function openDeleteModal(id) {
+  deleteId = id;
+  const o = getOrg(id); if (!o) return;
+  const has = hasChild(id);
+  document.getElementById('del-warning').style.display = has ? '' : 'none';
+  document.getElementById('del-desc').innerHTML = `정말로 <strong>${o.name}</strong>을(를) 삭제하시겠습니까?` +
+    (has ? '' : '<br><span style="font-size:13px;color:#64748b">이 기관의 모든 데이터가 삭제됩니다.</span>');
+  document.getElementById('del-btn').disabled = has;
+  openModal('modal-delete');
+}
+
+function handleDelete() {
+  const idx = orgs.findIndex(o => o.id === deleteId);
+  if (idx < 0) return;
+  orgs.splice(idx, 1);
+  closeModal('modal-delete');
+  renderOrgList();
+  toast('기관이 삭제되었습니다.', 'success');
+}
+
+/* ══════════════════════════════════════
+   Init
+   ══════════════════════════════════════ */
+renderOrgList();
+</script>
+</body>
+</html>

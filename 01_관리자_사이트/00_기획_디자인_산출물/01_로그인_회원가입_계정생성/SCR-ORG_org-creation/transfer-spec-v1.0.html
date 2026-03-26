@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCR-TRF — 기관관리자 이관 기능명세 v1.0</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.6; }
+  .version-bar { background: #1e293b; color: #fff; padding: 12px 32px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
+  .version-bar .doc-name { font-weight: 800; font-size: 14px; margin-right: auto; }
+  .version-btn { background: #4f46e5; color: #fff; border: 1px solid #4f46e5; padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .epic-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 8px; background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+  .version-toggle { background: #334155; color: #e2e8f0; border: 1px solid #475569; padding: 5px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+  .version-toggle:hover { background: #475569; }
+  .changelog-panel { background: #0f172a; color: #e2e8f0; max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+  .changelog-panel.open { max-height: 600px; overflow-y: auto; }
+  .changelog-inner { padding: 20px 32px 24px; }
+  .changelog-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: #fff; }
+  .ver-block { margin-bottom: 16px; padding: 14px 16px; background: #1e293b; border-radius: 8px; border-left: 3px solid #4f46e5; }
+  .ver-block.current { border-left-color: #22c55e; }
+  .ver-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .ver-tag { font-size: 11px; font-weight: 800; padding: 2px 10px; border-radius: 100px; }
+  .ver-tag.current { background: #dcfce7; color: #166534; }
+  .ver-changes { list-style: none; padding: 0; }
+  .ver-changes li { font-size: 12px; color: #cbd5e1; padding: 3px 0; padding-left: 16px; position: relative; }
+  .ver-changes li::before { content: ''; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 2px; }
+  .ver-changes li.added::before { background: #22c55e; }
+  .ver-changes li.changed::before { background: #f59e0b; }
+  .ver-changes li.removed::before { background: #ef4444; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 32px; }
+  .header { margin-bottom: 40px; }
+  .header h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+  .header .sub { font-size: 14px; color: #64748b; }
+  .update-info { margin-top: 12px; font-size: 12px; color: #94a3b8; }
+  .section { margin-bottom: 48px; }
+  .section-title { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 800; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
+  .section-title .num { background: #4f46e5; color: #fff; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .section-desc { font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.7; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+  .badge-cs { background: #eef2ff; color: #4f46e5; }
+  .badge-mgr { background: #ecfeff; color: #0891b2; }
+  .sub-title { font-size: 16px; font-weight: 700; margin: 28px 0 12px; padding-left: 12px; border-left: 3px solid #4f46e5; }
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .comp-table th { background: #f1f5f9; padding: 10px 14px; text-align: left; font-weight: 700; color: #475569; border-bottom: 2px solid #e2e8f0; font-size: 12px; }
+  .comp-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; line-height: 1.6; }
+  .comp-table tr:hover { background: #fafbfc; }
+  .comp-table .comp-name { font-weight: 700; color: #1e293b; white-space: nowrap; }
+  .comp-table .comp-type { font-size: 11px; color: #7c3aed; background: #f5f3ff; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .policy-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .policy-table th { background: #f0fdf4; padding: 10px 14px; text-align: left; font-weight: 700; color: #166534; border-bottom: 2px solid #bbf7d0; font-size: 12px; }
+  .policy-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; line-height: 1.6; }
+  .policy-table .policy-label { font-weight: 700; white-space: nowrap; color: #1e293b; }
+  .success-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .success-table th { background: #f0fdf4; padding: 10px 14px; text-align: left; font-weight: 700; color: #166534; border-bottom: 2px solid #bbf7d0; font-size: 12px; }
+  .success-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .success-msg { color: #16a34a; font-weight: 600; font-size: 12px; background: #f0fdf4; padding: 4px 10px; border-radius: 4px; display: inline-block; }
+  .err-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .err-table th { background: #fff7ed; padding: 10px 14px; text-align: left; font-weight: 700; color: #9a3412; border-bottom: 2px solid #fed7aa; font-size: 12px; }
+  .err-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .err-msg { color: #dc2626; font-weight: 600; font-size: 12px; background: #fef2f2; padding: 4px 10px; border-radius: 4px; display: inline-block; }
+  .note-box { padding: 14px 18px; border-radius: 8px; font-size: 12px; line-height: 1.7; margin-top: 12px; }
+  .note-blue { background: #eff6ff; border-left: 3px solid #3b82f6; color: #1e40af; }
+  .note-yellow { background: #fffbeb; border-left: 3px solid #f59e0b; color: #92400e; }
+  .note-red { background: #fef2f2; border-left: 3px solid #ef4444; color: #991b1b; }
+  .note-green { background: #f0fdf4; border-left: 3px solid #22c55e; color: #166534; }
+  .mermaid-wrap { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; overflow-x: auto; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+<div class="version-bar">
+  <span class="doc-name">SCR-TRF — MARKNOVA 통합 어드민 — 기관관리자 이관 기능명세</span>
+  <span class="epic-tag">NOV-5</span>
+  <span class="version-btn">v1.0</span>
+  <button class="version-toggle" onclick="document.getElementById('changelogPanel').classList.toggle('open')">변경이력</button>
+</div>
+
+<div class="changelog-panel" id="changelogPanel">
+  <div class="changelog-inner">
+    <div class="changelog-title">변경이력</div>
+    <div class="ver-block current">
+      <div class="ver-head">
+        <span class="ver-tag current">v1.0 (현재)</span>
+        <span class="ver-date" style="font-size:12px; color:#94a3b8;">2026-03-26</span>
+      </div>
+      <ul class="ver-changes">
+        <li class="added">최초 작성 — 기관관리자 이관 기능</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+<div class="header">
+  <h1><span style="color: #4f46e5; font-size: 16px; font-weight: 800; background: #eef2ff; padding: 4px 12px; border-radius: 6px; margin-right: 10px;">SCR-TRF</span>기관관리자 이관 기능명세</h1>
+  <div class="sub">
+    기관 상세 페이지에서 관리자를 다른 운영자로 교체하는 기능. 기존 관리자는 운영자로, 선택된 운영자는 관리자로 역할이 교체됩니다.
+  </div>
+  <div style="margin-top: 10px;">
+    <span class="badge badge-cs">CS 담당자</span>
+    <span class="badge badge-mgr">1차 기관관리자</span>
+    <span class="badge badge-mgr">2차 기관관리자</span>
+  </div>
+  <div class="update-info">v1.0 | 2026-03-26 | 최초 작성</div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- 1. 화면 개요 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><div class="num">1</div> 화면 개요</div>
+
+  <table class="policy-table">
+    <thead><tr><th style="width:160px">항목</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td class="policy-label">이관 실행 가능 역할</td><td>CS 담당자 / 1차 기관관리자 / 2차 기관관리자 (각 역할의 이관 가능 범위는 섹션 4 참고)</td></tr>
+      <tr><td class="policy-label">진입 경로</td><td>기관 리스트 → 기관명 클릭 → 기관 상세 페이지(SCR-ORG-005) → 관리자 정보 영역 "이관하기" 버튼</td></tr>
+      <tr><td class="policy-label">목적</td><td>기관의 관리자를 <strong>같은 기관 소속</strong> 운영자 중 한 명과 역할 교체 (관리자→운영자, 운영자→관리자). 다른 기관 간 교체는 불가.</td></tr>
+      <tr><td class="policy-label">교체 결과</td><td>기존 관리자 → <strong>운영자로 전환</strong> / 선택된 운영자 → <strong>관리자로 전환</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note-box note-yellow">
+    <strong>용어 정의:</strong><br>
+    · <strong>이관</strong> — 관리자 역할을 다른 사람에게 넘기는 것. 기존 관리자와 선택된 운영자의 역할이 서로 교체됩니다.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- 2. 이관 플로우 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><div class="num">2</div> 이관 플로우</div>
+  <div class="section-desc">기관 상세 페이지에서 "이관하기" 버튼 클릭부터 이관 완료까지의 흐름입니다.</div>
+
+  <div class="sub-title">Step 1. 이관하기 버튼 클릭</div>
+  <table class="comp-table">
+    <thead><tr><th style="width:160px">구성요소</th><th style="width:80px">유형</th><th>상세</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="comp-name">이관하기 버튼</td>
+        <td><span class="comp-type">버튼</span></td>
+        <td>기관 상세 페이지 관리자 정보 영역 옆에 위치.<br>관리자가 등록되어 있을 때만 활성화. 관리자 미등록 시 비활성.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sub-title">Step 2. 경고 안내 모달</div>
+  <div class="section-desc" style="margin-top:0;">이관하기 버튼 클릭 시 경고 모달이 표시됩니다.</div>
+  <table class="comp-table">
+    <thead><tr><th style="width:160px">구성요소</th><th style="width:80px">유형</th><th>상세</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="comp-name">경고 아이콘</td>
+        <td><span class="comp-type">아이콘</span></td>
+        <td>⚠️</td>
+      </tr>
+      <tr>
+        <td class="comp-name">경고 제목</td>
+        <td><span class="comp-type">텍스트</span></td>
+        <td>"기관관리자 이관 안내"</td>
+      </tr>
+      <tr>
+        <td class="comp-name">경고 내용</td>
+        <td><span class="comp-type">텍스트</span></td>
+        <td>
+          "관리자를 이관하면 다음과 같이 변경됩니다:"<br><br>
+          · 현재 관리자 <strong>{관리자이름}</strong>님은 <strong>기관운영자</strong>로 전환됩니다.<br>
+          · 선택한 운영자가 새로운 <strong>기관관리자</strong>로 지정됩니다.<br><br>
+          "이관을 진행하시려면 아래에 <strong>이관하겠습니다</strong>를 직접 입력해주세요."
+        </td>
+      </tr>
+      <tr>
+        <td class="comp-name">확인 문구 입력</td>
+        <td><span class="comp-type">텍스트 입력</span></td>
+        <td>안내 문구: "이관하겠습니다"를 입력하세요.<br>정확히 "이관하겠습니다"를 입력해야 확인 버튼 활성화. 대소문자/띄어쓰기 정확히 일치해야 함.</td>
+      </tr>
+      <tr>
+        <td class="comp-name">취소 버튼</td>
+        <td><span class="comp-type">보조 버튼</span></td>
+        <td>모달 닫힘</td>
+      </tr>
+      <tr>
+        <td class="comp-name">확인 버튼</td>
+        <td><span class="comp-type">주요 버튼</span></td>
+        <td>"이관하겠습니다" 미입력 또는 불일치 시 비활성.<br>정확히 입력 완료 시 활성화 → 클릭 시 운영자 선택 화면으로 이동</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sub-title">Step 3. 운영자 선택</div>
+  <div class="section-desc" style="margin-top:0;">해당 기관 소속 기관운영자 리스트에서 새 관리자를 선택합니다.</div>
+  <table class="comp-table">
+    <thead><tr><th style="width:160px">구성요소</th><th style="width:80px">유형</th><th>상세</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="comp-name">모달 제목</td>
+        <td><span class="comp-type">텍스트</span></td>
+        <td>"새 관리자 선택" + 기관명 표시</td>
+      </tr>
+      <tr>
+        <td class="comp-name">운영자 리스트</td>
+        <td><span class="comp-type">테이블</span></td>
+        <td>
+          해당 기관 소속 기관운영자만 표시<br>
+          컬럼: 선택(라디오) / 이름 / 이메일 / 전화번호 / 부서<br>
+          활성 계정만 표시 (비활성/만료 계정은 선택 불가)
+        </td>
+      </tr>
+      <tr>
+        <td class="comp-name">검색</td>
+        <td><span class="comp-type">텍스트 입력</span></td>
+        <td>이름 또는 이메일로 검색. 실시간 필터링.</td>
+      </tr>
+      <tr>
+        <td class="comp-name">취소 버튼</td>
+        <td><span class="comp-type">보조 버튼</span></td>
+        <td>모달 닫힘. 이관 취소.</td>
+      </tr>
+      <tr>
+        <td class="comp-name">이관 확인 버튼</td>
+        <td><span class="comp-type">주요 버튼</span></td>
+        <td>"이관 완료" 클릭 → 운영자 미선택 시 비활성.<br>선택 후 클릭 → 역할 교체 실행.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note-box note-red">
+    <strong>운영자가 없는 경우:</strong><br>
+    · "이관 가능한 운영자가 없습니다." 안내 표시<br>
+    · "이관 완료" 버튼 비활성<br>
+    · 운영자 계정을 먼저 생성해야 이관 가능
+  </div>
+
+  <div class="sub-title">Step 4. 이관 완료</div>
+  <table class="comp-table">
+    <thead><tr><th style="width:160px">처리 항목</th><th>상세</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="comp-name">기존 관리자</td>
+        <td>역할: 기관관리자 → <strong>기관운영자</strong>로 전환</td>
+      </tr>
+      <tr>
+        <td class="comp-name">선택된 운영자</td>
+        <td>역할: 기관운영자 → <strong>기관관리자</strong>로 전환</td>
+      </tr>
+      <tr>
+        <td class="comp-name">이관 이력</td>
+        <td>이관 기록 저장 (일시, 이전 관리자, 새 관리자)</td>
+      </tr>
+      <tr>
+        <td class="comp-name">성공 메시지</td>
+        <td>"관리자가 {새관리자이름}님으로 이관되었습니다."</td>
+      </tr>
+      <tr>
+        <td class="comp-name">완료 후 이동</td>
+        <td>기관 상세 페이지로 돌아감 (관리자 정보 갱신)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- 3. 이관 이력 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><div class="num">3</div> 이관 이력</div>
+  <div class="section-desc">기관 상세 페이지 관리자 정보 하단에 최근 3건의 이관 이력을 표시합니다.</div>
+
+  <table class="comp-table">
+    <thead><tr><th style="width:60px">컬럼</th><th style="width:120px">컬럼명</th><th>상세</th></tr></thead>
+    <tbody>
+      <tr><td>①</td><td class="comp-name">이관 일시</td><td>YYYY-MM-DD HH:MM</td></tr>
+      <tr><td>②</td><td class="comp-name">이전 관리자</td><td>이전 관리자 이름 (이메일)</td></tr>
+      <tr><td>③</td><td class="comp-name">새 관리자</td><td>새 관리자 이름 (이메일)</td></tr>
+      <tr><td>④</td><td class="comp-name">처리자</td><td>이관을 실행한 사람 (CS 담당자 또는 기관관리자)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note-box note-blue">
+    <strong>이력 표시 규칙:</strong><br>
+    · 최근 3건만 표시 (최신순)<br>
+    · 이관 이력이 없으면 "이관 이력이 없습니다." 표시<br>
+    · 이력은 삭제 불가 (자동 관리)
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- 4. 접근 권한별 차이 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><div class="num">4</div> 이관 실행 권한</div>
+  <div class="section-desc">누가 어떤 기관의 관리자 이관을 실행할 수 있는지 정의합니다. 이관은 항상 <strong>같은 기관 내에서만</strong> 이루어집니다 (A기관 관리자를 B기관 운영자로 교체하는 것은 불가).</div>
+
+  <table class="policy-table">
+    <thead><tr><th style="width:180px">이관 실행자</th><th>이관 가능 대상 기관</th><th>교체 방식</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="policy-label">CS 담당자</td>
+        <td>전체 기관</td>
+        <td>선택한 기관의 관리자 ↔ <strong>같은 기관 소속</strong> 운영자 교체</td>
+      </tr>
+      <tr>
+        <td class="policy-label">1차 기관관리자</td>
+        <td>본인 소속 1차 기관 + 하위 2차 기관</td>
+        <td>해당 기관의 관리자 ↔ <strong>같은 기관 소속</strong> 운영자 교체</td>
+      </tr>
+      <tr>
+        <td class="policy-label">2차 기관관리자</td>
+        <td>본인 소속 2차 기관</td>
+        <td>본인(관리자) ↔ <strong>같은 2차 기관 소속</strong> 운영자 교체<br><span style="font-size:11px; color:#64748b;">※ 2차 기관관리자가 직접 이관 시 본인이 운영자로 전환됨</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note-box note-red">
+    <strong>핵심 규칙:</strong><br>
+    · 이관은 반드시 <strong>같은 기관 소속</strong> 내에서만 가능 (다른 기관 간 교체 불가)<br>
+    · 이관 대상: 해당 기관의 <strong>활성 상태 운영자</strong>만 선택 가능 (비활성/만료 계정 불가)
+  </div>
+
+  <div class="note-box note-yellow" style="margin-top: 12px;">
+    <strong>2차 기관관리자 본인 이관 시 주의:</strong><br>
+    · 2차 기관관리자가 본인 기관의 이관을 실행하면 <strong>본인이 운영자로 전환</strong>됨<br>
+    · 이관 후 관리자 메뉴에 접근 불가 (운영자 권한으로 전환)<br>
+    · 이 내용은 경고 안내 모달에서 사전 안내됨
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- 5. 성공/에러 메시지 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><div class="num">5</div> 성공/에러 메시지</div>
+
+  <div class="sub-title">5-1. 성공 메시지</div>
+  <table class="success-table">
+    <thead><tr><th style="width:200px">동작</th><th>메시지</th><th style="width:200px">완료 후 이동</th></tr></thead>
+    <tbody>
+      <tr><td class="comp-name">이관 완료</td><td><span class="success-msg">관리자가 {새관리자이름}님으로 이관되었습니다.</span></td><td>기관 상세 페이지 (정보 갱신)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sub-title">5-2. 에러/안내 메시지</div>
+  <table class="err-table">
+    <thead><tr><th style="width:200px">조건</th><th>메시지</th></tr></thead>
+    <tbody>
+      <tr><td>관리자 미등록 상태에서 이관 시도</td><td><span class="err-msg">등록된 관리자가 없습니다.</span> (버튼 비활성)</td></tr>
+      <tr><td>소속 운영자가 없음</td><td><span class="err-msg">이관 가능한 운영자가 없습니다.</span></td></tr>
+      <tr><td>운영자 미선택 상태에서 이관 확인</td><td>"이관 완료" 버튼 비활성 (에러 메시지 없음)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- 6. 전체 플로우차트 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><div class="num">6</div> 전체 플로우차트</div>
+  <div class="section-desc">기관 상세에서 이관하기 버튼 클릭부터 이관 완료까지의 흐름</div>
+
+  <div class="mermaid-wrap">
+    <div class="mermaid">
+flowchart TD
+    START(["기관 상세 페이지\n'이관하기' 버튼 클릭"])
+
+    START --> CHK_MGR{"관리자\n등록되어 있는가?"}
+    CHK_MGR -->|"미등록"| ERR_NO["버튼 비활성\n(이관 불가)"]
+    CHK_MGR -->|"등록됨"| WARN["⚠️ 경고 안내 모달\n'현재 관리자는 운영자로 전환됩니다'"]
+
+    WARN --> CANCEL1["취소 → 모달 닫힘"]
+    WARN --> PROCEED["'이관하겠습니다' 클릭"]
+
+    PROCEED --> SELECT["운영자 선택 화면\n(해당 기관 소속 활성 운영자)"]
+
+    SELECT --> CHK_OPR{"소속 운영자\n있는가?"}
+    CHK_OPR -->|"없음"| ERR_NOOPR["'이관 가능한 운영자가\n없습니다' 안내"]
+    CHK_OPR -->|"있음"| LIST["운영자 리스트 표시\n(라디오 선택)"]
+
+    LIST --> CHK_SEL{"운영자\n선택했는가?"}
+    CHK_SEL -->|"미선택"| DISABLED["'이관 완료' 버튼 비활성"]
+    CHK_SEL -->|"선택 완료"| CONFIRM["'이관 완료' 클릭"]
+
+    CONFIRM --> SWAP["역할 교체 실행\n기존 관리자 → 운영자\n선택 운영자 → 관리자"]
+    SWAP --> HISTORY["이관 이력 저장"]
+    HISTORY --> DONE["✅ 이관 완료\n기관 상세 페이지로 이동\n(관리자 정보 갱신)"]
+
+    style START fill:#4f46e5,color:#fff
+    style CHK_MGR fill:#fef3c7,color:#92400e
+    style ERR_NO fill:#f1f5f9,color:#94a3b8
+    style WARN fill:#fffbeb,color:#92400e
+    style CANCEL1 fill:#f1f5f9,color:#94a3b8
+    style PROCEED fill:#dbeafe,color:#1e40af
+    style SELECT fill:#dbeafe,color:#1e40af
+    style CHK_OPR fill:#fef3c7,color:#92400e
+    style ERR_NOOPR fill:#fee2e2,color:#991b1b
+    style LIST fill:#dbeafe,color:#1e40af
+    style CHK_SEL fill:#fef3c7,color:#92400e
+    style DISABLED fill:#f1f5f9,color:#94a3b8
+    style CONFIRM fill:#dbeafe,color:#1e40af
+    style SWAP fill:#e0e7ff,color:#3730a3
+    style HISTORY fill:#e0e7ff,color:#3730a3
+    style DONE fill:#dcfce7,color:#166534
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: { primaryColor: '#dbeafe', primaryTextColor: '#1e293b', primaryBorderColor: '#93c5fd', lineColor: '#64748b', fontSize: '13px' },
+    flowchart: { htmlLabels: true, curve: 'basis', nodeSpacing: 30, rankSpacing: 40 }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARKNOVA 통합 어드민 — CS담당자 계정생성</title>
+<style>
+/* ═══════════════════════════════════════
+   Reset & Root — 디자인시스템 v1.0
+   ═══════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{font-family:Pretendard,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;font-size:14px;color:#1a1a2e;background-color:#f0f2f5;-webkit-font-smoothing:antialiased}
+body{margin:0;min-height:100vh}
+
+/* ═══════════════════════════════════════
+   Sidebar
+   ═══════════════════════════════════════ */
+.sidebar{width:240px;min-width:240px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:0 20px;height:60px;border-bottom:1px solid #e2e8f0;flex-shrink:0}
+.sidebar-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#00E0A0,#00CDD4,#009CA1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
+.sidebar-brand{font-size:16px;font-weight:800;color:#191919;letter-spacing:.5px}
+.sidebar-role{font-size:12px;color:#6366f1;font-weight:600;margin-top:1px}
+.sidebar-nav{padding:16px 12px;flex:1;overflow-y:auto}
+.nav-section-label{font-size:12px;color:#94a3b8;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:0 10px;margin:8px 0 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;font-size:14px;color:#4b5563;cursor:pointer;transition:background .12s,color .12s;font-weight:500;margin-bottom:2px}
+.nav-item:hover{background:#f8fafc;color:#191919}
+.nav-item.active{background:rgba(0,184,132,.08);color:#00B884;font-weight:600}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sidebar-footer{padding:12px 16px 16px;border-top:1px solid #e2e8f0;flex-shrink:0}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:#f8fafc;margin-bottom:8px}
+.sidebar-avatar{width:32px;height:32px;background:linear-gradient(135deg,#00E0A0,#00CDD4,#009CA1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.sidebar-uname{font-size:13px;font-weight:600;color:#191919}
+.sidebar-uemail{font-size:12px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px}
+.logout-btn{width:100%;padding:8px;background:transparent;border:1px solid #e2e8f0;border-radius:7px;color:#64748b;font-size:13px;cursor:pointer;transition:all .12s;font-weight:500;font-family:inherit}
+.logout-btn:hover{background:#f8fafc;color:#191919}
+
+/* ═══════════════════════════════════════
+   Top Header
+   ═══════════════════════════════════════ */
+.top-header{height:60px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:50;flex-shrink:0}
+.header-title{font-size:15px;font-weight:700;color:#191919}
+.header-breadcrumb{font-size:13px;color:#94a3b8;margin-left:12px;font-weight:400}
+
+/* ═══════════════════════════════════════
+   Main Content
+   ═══════════════════════════════════════ */
+.main-wrapper{margin-left:240px;flex:1;display:flex;flex-direction:column;min-width:0}
+.main-content{flex:1;padding:24px 32px;overflow-y:auto;background:#f1f5f9}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.page-title{font-size:22px;font-weight:800;color:#191919}
+.page-sub{font-size:13px;color:#64748b;margin-top:4px}
+
+/* ═══════════════════════════════════════
+   Tabs
+   ═══════════════════════════════════════ */
+.tab-bar{display:flex;border-bottom:1px solid #e2e8f0;background:#fff;border-radius:14px 14px 0 0;overflow:hidden}
+.tab-item{flex:1;padding:14px;font-size:13px;font-weight:600;color:#64748b;text-align:center;cursor:pointer;border-bottom:2px solid transparent;background:#f8fafc;transition:all .15s}
+.tab-item:hover{color:#334155}
+.tab-item.active{background:#fff;color:#00B884;border-bottom-color:#00B884}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ═══════════════════════════════════════
+   List Container
+   ═══════════════════════════════════════ */
+.list-container{background:#fff;border-radius:14px;box-shadow:0 1px 4px #0000000f;border:1px solid #f1f5f9;overflow:hidden}
+.list-container.with-tabs{border-radius:0 0 14px 14px}
+.list-toolbar{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #f1f5f9;gap:12px;flex-wrap:wrap}
+.search-wrap{display:flex;align-items:center;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:0 12px;gap:8px;flex:1;max-width:360px;transition:border-color .2s}
+.search-wrap:focus-within{border-color:#00B884;background:#fff}
+.search-input{border:none;background:transparent;font-size:14px;color:#1a1a2e;padding:9px 0;outline:none;width:100%;font-family:inherit}
+.search-input::placeholder{color:#b0b8c4}
+.search-clear{background:none;border:none;color:#94a3b8;font-size:18px;cursor:pointer;padding:0 2px;line-height:1;display:none}
+.search-clear.show{display:block}
+.list-count{font-size:13px;color:#64748b;white-space:nowrap}
+
+/* Filter Area */
+.filter-area{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9;flex-wrap:wrap}
+.filter-select{padding:7px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;color:#1a1a2e;background:#f8fafc;outline:none;transition:border-color .2s;font-family:inherit;cursor:pointer}
+.filter-select:focus{border-color:#00B884;background:#fff}
+.filter-pills{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:5px 12px;border:1.5px solid #e2e8f0;border-radius:20px;background:#fff;font-size:12px;font-weight:600;color:#64748b;cursor:pointer;transition:all .15s;font-family:inherit}
+.filter-btn:hover{border-color:#00B884;color:#00B884}
+.filter-btn.active{background:#00B884;border-color:#00B884;color:#fff}
+
+/* Searchable select for filter */
+.filter-searchable{position:relative;min-width:160px}
+.filter-searchable input{padding:7px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;color:#1a1a2e;background:#f8fafc;outline:none;transition:border-color .2s;font-family:inherit;width:100%}
+.filter-searchable input:focus{border-color:#00B884;background:#fff}
+.filter-searchable input::placeholder{color:#b0b8c4}
+.fs-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #e2e8f0;border-radius:7px;max-height:200px;overflow-y:auto;z-index:10;display:none;box-shadow:0 8px 32px rgba(0,0,0,.12);margin-top:4px}
+.fs-dropdown.open{display:block}
+.fs-item{padding:9px 12px;font-size:13px;cursor:pointer;color:#1e293b;transition:background .1s}
+.fs-item:hover{background:#f0fdf4;color:#00B884}
+.fs-item.selected{background:#f0fdf4;color:#00B884;font-weight:600}
+.fs-empty{padding:12px;font-size:13px;color:#94a3b8;text-align:center}
+
+/* ═══════════════════════════════════════
+   Table
+   ═══════════════════════════════════════ */
+.table-wrap{overflow-x:auto}
+.inst-table{width:100%;border-collapse:collapse;font-size:13px}
+.inst-table thead tr{background:#f8fafc}
+.inst-table th{padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #e2e8f0;white-space:nowrap}
+.inst-table td{padding:14px 16px;border-bottom:1px solid #f1f5f9;color:#1e293b;vertical-align:middle}
+.inst-table tbody tr:last-child td{border-bottom:none}
+.inst-table tbody tr:hover{background:#fafbfc}
+.table-empty{text-align:center;padding:48px;color:#94a3b8;font-size:14px}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:center;gap:4px;padding:16px 20px;border-top:1px solid #f1f5f9}
+.page-btn{min-width:32px;height:32px;padding:0 8px;border:1px solid #e2e8f0;border-radius:6px;background:#fff;font-size:13px;color:#475569;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;justify-content:center}
+.page-btn:hover{background:#f8fafc;border-color:#94a3b8}
+.page-btn.active{background:#00B884;border-color:#00B884;color:#fff;font-weight:700}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+.page-info{font-size:12px;color:#94a3b8;margin:0 8px}
+
+/* Badges */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.badge-active{background:#dcfce7;color:#16a34a}
+.badge-inactive{background:#f1f5f9;color:#64748b}
+.badge-expired{background:#fee2e2;color:#dc2626}
+.badge-pending{background:#fef9c3;color:#b45309}
+.badge-approved{background:#dcfce7;color:#16a34a}
+
+/* Role badges */
+.role-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700;white-space:nowrap}
+.role-mgr1,.role-mgr2{background:#ecfeff;color:#0891b2}
+.role-opr{background:#ecfdf5;color:#059669}
+.role-ec{background:#fef2f2;color:#dc2626}
+
+/* Buttons */
+.btn-primary{padding:10px 20px;background:linear-gradient(135deg,#00E0A0,#00CDD4,#009CA1);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:opacity .2s}
+.btn-primary:hover{opacity:.88}
+.btn-submit{padding:10px 26px;background:linear-gradient(135deg,#00E0A0,#00CDD4,#009CA1);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;font-family:inherit}
+.btn-submit:hover{opacity:.88}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.btn-cancel{padding:10px 22px;background:#f1f5f9;border:none;border-radius:8px;color:#64748b;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;font-family:inherit}
+.btn-cancel:hover{background:#e2e8f0}
+.btn-danger{padding:11px 22px;background:#dc2626;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;font-family:inherit}
+.btn-danger:hover{background:#b91c1c}
+.btn-danger:disabled{opacity:.5;cursor:not-allowed}
+.btn-edit{padding:5px 12px;background:#eff6ff;color:#00B884;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-right:4px;transition:opacity .15s;font-family:inherit}
+.btn-edit:hover{background:#dbeafe}
+.btn-delete{padding:5px 12px;background:#fef2f2;color:#dc2626;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-right:4px;transition:opacity .15s;font-family:inherit}
+.btn-delete:hover{background:#fee2e2}
+.btn-resend{padding:5px 12px;background:#f0fdf4;color:#059669;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s;font-family:inherit}
+.btn-resend:hover{background:#dcfce7}
+.btn-approve{padding:5px 12px;background:#eff6ff;color:#00B884;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s;font-family:inherit}
+.btn-approve:hover{background:#dbeafe}
+.td-actions{display:flex;gap:4px;flex-wrap:nowrap;white-space:nowrap}
+
+/* ═══════════════════════════════════════
+   Modal
+   ═══════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:#1919198c;backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:16px;width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px #00000040}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 28px 18px;border-bottom:1px solid #f1f5f9;flex-shrink:0}
+.modal-header h2{font-size:18px;font-weight:800;color:#191919}
+.modal-close{background:none;border:none;font-size:22px;color:#94a3b8;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1}
+.modal-close:hover{background:#f1f5f9;color:#475569}
+.modal-scroll{flex:1;overflow-y:auto;padding:24px 28px}
+.modal-footer{display:flex;justify-content:center;gap:10px;padding:16px 28px 22px;border-top:1px solid #f1f5f9;flex-shrink:0}
+
+/* Confirm modal */
+.confirm-box{background:#fff;border-radius:16px;width:100%;max-width:550px;padding:32px 28px 28px;text-align:center;box-shadow:0 24px 80px #00000040}
+.confirm-icon{font-size:36px;margin-bottom:12px}
+.confirm-title{font-size:18px;font-weight:800;color:#191919;margin-bottom:10px}
+.confirm-desc{font-size:14px;color:#475569;line-height:1.6;margin-bottom:20px}
+.confirm-desc strong{color:#dc2626}
+.confirm-footer{display:flex;justify-content:center;gap:10px}
+.confirm-footer .btn-cancel,.confirm-footer .btn-danger{flex:1;padding:11px}
+
+/* ═══════════════════════════════════════
+   Form
+   ═══════════════════════════════════════ */
+.section-title{font-size:13px;font-weight:700;color:#1e3a5f;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #eff6ff;padding-bottom:8px;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.form-row{margin-bottom:16px}
+.form-row.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:12px;font-weight:700;color:#374151}
+.required{color:#ef4444;margin-left:2px}
+.form-group input,.form-group textarea,.form-group select{padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:13px;color:#1a1a2e;background:#f8fafc;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;resize:vertical}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#00B884;box-shadow:0 0 0 3px #00B88414;background:#fff}
+.form-group input::placeholder,.form-group textarea::placeholder{color:#c4cdd6}
+.form-group input:disabled,.form-group select:disabled{background:#f1f5f9;color:#94a3b8;cursor:not-allowed}
+.form-group.has-error input,.form-group.has-error select,.form-group.has-error textarea{border-color:#ef4444;background:#fff5f5}
+.error-msg{font-size:12px;color:#ef4444;font-weight:500;display:none}
+.error-msg.show{display:block}
+
+/* Searchable select (modal) */
+.searchable-select{position:relative}
+.searchable-select input{width:100%}
+.ss-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #e2e8f0;border-radius:7px;max-height:200px;overflow-y:auto;z-index:10;display:none;box-shadow:0 8px 32px rgba(0,0,0,.12);margin-top:4px}
+.ss-dropdown.open{display:block}
+.ss-item{padding:9px 12px;font-size:13px;cursor:pointer;color:#1e293b;transition:background .1s}
+.ss-item:hover{background:#f0fdf4;color:#00B884}
+.ss-item .ss-path{font-size:11px;color:#94a3b8;display:block;margin-top:2px}
+.ss-empty{padding:12px;font-size:13px;color:#94a3b8;text-align:center}
+
+/* Note box */
+.note-box{padding:12px 16px;border-radius:8px;font-size:13px;font-weight:500;line-height:1.5;margin-top:8px}
+.note-box.info{background:#f0fdf4;border:1px solid #bbf7d0;color:#16a34a}
+
+/* Toast */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);padding:14px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:10000;animation:toast-in .3s ease;max-width:540px;white-space:nowrap}
+.toast-success{background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0}
+.toast-error{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}
+@keyframes toast-in{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Sidebar -->
+<!-- ═══════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">M</div>
+    <div>
+      <div class="sidebar-brand">MARKNOVA</div>
+      <div class="sidebar-role">CS 담당자</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">관리</div>
+    <div class="nav-item"><span class="nav-icon">🏠</span><span>대시보드</span></div>
+    <div class="nav-item"><span class="nav-icon">🏢</span><span>기관관리</span></div>
+    <div class="nav-item active"><span class="nav-icon">👤</span><span>계정 관리</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">박</div>
+      <div>
+        <div class="sidebar-uname">박CS</div>
+        <div class="sidebar-uemail">cs@marknova.co.kr</div>
+      </div>
+    </div>
+    <button class="logout-btn">로그아웃</button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Main -->
+<!-- ═══════════════════════════════════════ -->
+<div class="main-wrapper">
+  <header class="top-header">
+    <div style="display:flex;align-items:center">
+      <span class="header-title">MARKNOVA</span>
+      <span class="header-breadcrumb"> › 계정 관리</span>
+    </div>
+    <button class="logout-btn" style="width:auto;padding:7px 14px">로그아웃</button>
+  </header>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">계정 관리</div>
+        <div class="page-sub">권한별 계정을 생성하고, 활성화 상태를 관리합니다.</div>
+      </div>
+      <button class="btn-primary" onclick="openCreateModal()">+ 계정 생성</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <div class="tab-item active" onclick="switchTab(0)">계정 현황</div>
+      <div class="tab-item" onclick="switchTab(1)">요청 관리 <span id="req-tab-badge" style="background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:100px;margin-left:4px;display:none"></span></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- Tab 1: 계정 현황 -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-accounts">
+      <div class="list-container with-tabs">
+        <!-- Filters -->
+        <div class="filter-area">
+          <select class="filter-select" id="filter-role" onchange="onFilterChange()">
+            <option value="">전체 역할</option>
+            <option value="mgr1">기관관리자(1차)</option>
+            <option value="mgr2">기관관리자(2차)</option>
+            <option value="opr">기관운영자</option>
+            <option value="ec">응급콜센터 직원</option>
+          </select>
+          <div class="filter-searchable" id="filter-org-wrap">
+            <input id="filter-org-search" placeholder="전체 기관" autocomplete="off"
+                   oninput="filterOrgDropdown()" onfocus="openFilterOrgDropdown()" onclick="openFilterOrgDropdown()">
+            <input type="hidden" id="filter-org-id" value="">
+            <div class="fs-dropdown" id="filter-org-dropdown"></div>
+          </div>
+          <div class="filter-pills" id="status-pills"></div>
+        </div>
+        <div class="table-wrap">
+          <table class="inst-table">
+            <thead><tr>
+              <th style="width:40px">#</th>
+              <th>이름</th>
+              <th>이메일(ID)</th>
+              <th>전화번호</th>
+              <th>역할</th>
+              <th>소속 기관</th>
+              <th>상태</th>
+              <th>링크 발송일</th>
+              <th>생성일</th>
+              <th style="width:150px">관리</th>
+            </tr></thead>
+            <tbody id="acct-tbody"></tbody>
+          </table>
+        </div>
+        <div class="table-empty" id="acct-empty" style="display:none"></div>
+        <div class="pagination" id="acct-pagination"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- Tab 2: 요청 관리 -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-requests">
+      <div class="list-container with-tabs">
+        <div class="filter-area">
+          <div class="filter-pills" id="req-pills"></div>
+        </div>
+        <div class="table-wrap">
+          <table class="inst-table">
+            <thead><tr>
+              <th style="width:40px">#</th>
+              <th>요청 유형</th>
+              <th>요청자 이름</th>
+              <th>요청자 이메일</th>
+              <th>소속 기관</th>
+              <th>요청일시</th>
+              <th>상태</th>
+              <th style="width:80px">관리</th>
+            </tr></thead>
+            <tbody id="req-tbody"></tbody>
+          </table>
+        </div>
+        <div class="table-empty" id="req-empty" style="display:none"></div>
+        <div class="pagination" id="req-pagination"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Modal: 계정 생성 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-create" onclick="if(event.target===this)closeModal('modal-create')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <h2 id="modal-create-title">계정 생성</h2>
+        <div class="page-sub" style="margin-top:4px">이용하실 대상자의 정보를 입력하세요.</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-create')">✕</button>
+    </div>
+    <div class="modal-scroll" id="modal-create-scroll">
+      <!-- 역할 선택 -->
+      <div class="form-row">
+        <div class="form-group" id="fg-role">
+          <label>역할 선택 <span class="required">*</span></label>
+          <select id="f-role" onchange="onRoleChange()">
+            <option value="">역할을 선택하세요</option>
+            <option value="mgr1">기관관리자(1차)</option>
+            <option value="mgr2">기관관리자(2차)</option>
+            <option value="opr">기관운영자</option>
+            <option value="ec">응급콜센터 직원</option>
+          </select>
+          <span class="error-msg" id="err-role"></span>
+        </div>
+      </div>
+
+      <!-- 소속 기관 -->
+      <div class="form-row" id="org-row">
+        <div class="form-group" id="fg-org">
+          <label>소속 기관 <span class="required">*</span></label>
+          <div class="searchable-select">
+            <input id="f-org-search" placeholder="소속 기관 검색" autocomplete="off"
+                   oninput="filterModalOrgList()" onfocus="openModalOrgDropdown()" onclick="openModalOrgDropdown()">
+            <input type="hidden" id="f-org-id">
+            <div class="ss-dropdown" id="modal-org-dropdown"></div>
+          </div>
+          <span class="error-msg" id="err-org"></span>
+        </div>
+      </div>
+
+      <!-- 이름 -->
+      <div class="form-row">
+        <div class="form-group" id="fg-name">
+          <label>이름 <span class="required">*</span></label>
+          <input id="f-name" placeholder="이름 입력" oninput="clearErr('fg-name')">
+          <span class="error-msg" id="err-name"></span>
+        </div>
+      </div>
+
+      <!-- 이메일 -->
+      <div class="form-row">
+        <div class="form-group" id="fg-email">
+          <label>이메일 (ID) <span class="required">*</span></label>
+          <input id="f-email" type="email" placeholder="이메일 주소 입력" oninput="clearErr('fg-email')">
+          <span class="error-msg" id="err-email"></span>
+        </div>
+      </div>
+
+      <!-- 전화번호 -->
+      <div class="form-row">
+        <div class="form-group" id="fg-phone">
+          <label>전화번호 <span class="required">*</span></label>
+          <input id="f-phone" placeholder="010-0000-0000" oninput="formatPhone(this);clearErr('fg-phone')" maxlength="13">
+          <span class="error-msg" id="err-phone"></span>
+        </div>
+      </div>
+
+      <!-- 안내 노트 -->
+      <div class="note-box info">
+        계정을 생성하면, 입력하신 이메일로 비밀번호를 설정할수 있는 링크가 발송됩니다. (유효기간: 5일)
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-create')">취소</button>
+      <button class="btn-submit" id="modal-create-btn" onclick="handleCreate()">계정 생성</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Modal: 계정 수정 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-edit" onclick="if(event.target===this)closeModal('modal-edit')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>계정 수정</h2>
+      <button class="modal-close" onclick="closeModal('modal-edit')">✕</button>
+    </div>
+    <div class="modal-scroll" id="modal-edit-scroll">
+      <!-- 이메일 (readonly) -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>이메일 (ID)</label>
+          <input id="fe-email" disabled>
+        </div>
+      </div>
+      <!-- 역할 (readonly) -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>역할</label>
+          <input id="fe-role" disabled>
+        </div>
+      </div>
+      <!-- 소속 기관 (readonly) -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>소속 기관</label>
+          <input id="fe-org" disabled>
+        </div>
+      </div>
+      <!-- 이름 -->
+      <div class="form-row">
+        <div class="form-group" id="fge-name">
+          <label>이름 <span class="required">*</span></label>
+          <input id="fe-name" placeholder="이름 입력" oninput="clearErr('fge-name')">
+          <span class="error-msg" id="erre-name"></span>
+        </div>
+      </div>
+      <!-- 전화번호 -->
+      <div class="form-row">
+        <div class="form-group" id="fge-phone">
+          <label>전화번호 <span class="required">*</span></label>
+          <input id="fe-phone" placeholder="010-0000-0000" oninput="formatPhone(this);clearErr('fge-phone')" maxlength="13">
+          <span class="error-msg" id="erre-phone"></span>
+        </div>
+      </div>
+      <!-- 부서 (기관운영자만) -->
+      <div class="form-row" id="edit-dept-row" style="display:none">
+        <div class="form-group">
+          <label>부서</label>
+          <input id="fe-dept" placeholder="부서명 입력 (선택)">
+        </div>
+      </div>
+      <!-- 역할 선택 (기관운영자만) -->
+      <div class="form-row" id="edit-subrole-row" style="display:none">
+        <div class="form-group">
+          <label>역할 선택</label>
+          <select id="fe-subrole">
+            <option value="">선택 안 함</option>
+            <option value="운영담당자">운영담당자</option>
+            <option value="사회복지사">사회복지사</option>
+            <option value="생활지원사">생활지원사</option>
+            <option value="응급관리요원">응급관리요원</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-edit')">취소</button>
+      <button class="btn-submit" onclick="handleEdit()">수정 완료</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- Modal: 계정 삭제 확인 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-delete" onclick="if(event.target===this)closeModal('modal-delete')">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title">계정 삭제</div>
+    <div class="confirm-desc" id="del-desc"></div>
+    <div class="confirm-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-delete')">취소</button>
+      <button class="btn-danger" id="del-btn" onclick="handleDelete()">삭제</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ══════════════════════════════════════
+   Data
+   ══════════════════════════════════════ */
+let nextAcctId = 100;
+let nextReqId = 100;
+
+const ROLE_LABELS = { mgr1:'기관관리자(1차)', mgr2:'기관관리자(2차)', opr:'기관운영자', ec:'응급콜센터 직원' };
+const ROLE_KEYS = Object.keys(ROLE_LABELS);
+
+/* Orgs data (shared with 기관생성 - empty initially, add test orgs) */
+const orgs = [
+  { id:1, name:'서울돌봄센터', tier:1, parentId:null },
+  { id:2, name:'중앙복지재단', tier:1, parentId:null },
+  { id:3, name:'강남복지관', tier:2, parentId:1 },
+  { id:4, name:'경기돌봄센터', tier:1, parentId:null },
+  { id:5, name:'부산시니어센터', tier:2, parentId:4 },
+  { id:6, name:'인천복지재단', tier:1, parentId:null },
+];
+
+const accts = [
+  { id:1, name:'이준호', email:'junho@seoulcare.or.kr', phone:'010-1111-2222', role:'mgr1', orgId:1, status:'active', dept:'', subRole:'', linkDate:'2025-01-02', created:'2025-01-01' },
+  { id:2, name:'김민지', email:'minji@joongang.kr', phone:'010-2222-3333', role:'mgr2', orgId:3, status:'active', dept:'', subRole:'', linkDate:'2025-03-02', created:'2025-03-01' },
+  { id:3, name:'박선우', email:'sunwoo@gangnam.kr', phone:'010-3333-4444', role:'opr', orgId:3, status:'inactive', dept:'돌봄팀', subRole:'사회복지사', linkDate:'2026-03-20', created:'2026-03-20' },
+  { id:4, name:'정하늘', email:'haneul@ggcare.or.kr', phone:'010-4444-5555', role:'mgr1', orgId:4, status:'active', dept:'', subRole:'', linkDate:'2025-04-02', created:'2025-04-01' },
+  { id:5, name:'최수진', email:'sujin@busansr.kr', phone:'010-5555-6666', role:'opr', orgId:5, status:'expired', dept:'현장팀', subRole:'생활지원사', linkDate:'2025-01-02', created:'2024-12-28' },
+  { id:6, name:'한지민', email:'jimin@icwelfare.or.kr', phone:'010-6666-7777', role:'ec', orgId:null, status:'inactive', dept:'', subRole:'', linkDate:'2026-03-22', created:'2026-03-22' },
+  { id:7, name:'강동원', email:'dongwon@emergency.kr', phone:'010-7777-8888', role:'ec', orgId:null, status:'active', dept:'', subRole:'', linkDate:'2025-06-01', created:'2025-06-01' },
+];
+
+const reqs = [
+  { id:1, type:'pw_reset', name:'최수진', email:'sujin@busansr.kr', orgId:5, date:'2026-03-23 14:30', status:'pending' },
+  { id:2, type:'link_resend', name:'박선우', email:'sunwoo@gangnam.kr', orgId:3, date:'2026-03-23 16:05', status:'pending' },
+  { id:3, type:'pw_reset', name:'이준호', email:'junho@seoulcare.or.kr', orgId:1, date:'2026-03-20 09:15', status:'approved' },
+  { id:4, type:'link_resend', name:'한지민', email:'jimin@icwelfare.or.kr', orgId:null, date:'2026-03-22 08:50', status:'pending' },
+];
+
+/* ══════════════════════════════════════
+   Helpers
+   ══════════════════════════════════════ */
+const getOrg = id => orgs.find(o => o.id === id);
+const getOrgName = id => { const o = getOrg(id); return o ? o.name : '-'; };
+function getOrgPath(id) {
+  const o = getOrg(id);
+  if (!o) return '-';
+  const path = [];
+  let cur = o;
+  while (cur) {
+    path.unshift(cur.name);
+    cur = cur.parentId ? getOrg(cur.parentId) : null;
+  }
+  return path.join(' › ');
+}
+
+function roleBadge(role) {
+  return `<span class="role-badge role-${role}">${ROLE_LABELS[role] || role}</span>`;
+}
+
+function statusBadge(s) {
+  if (s === 'active') return '<span class="badge badge-active">활성</span>';
+  if (s === 'inactive') return '<span class="badge badge-inactive">비활성</span>';
+  if (s === 'expired') return '<span class="badge badge-expired">링크 만료</span>';
+  return '-';
+}
+
+function reqTypeName(t) {
+  if (t === 'pw_reset') return 'PW 초기화';
+  if (t === 'link_resend') return '링크 재발송';
+  return t;
+}
+
+function reqStatusBadge(s) {
+  if (s === 'pending') return '<span class="badge badge-pending">대기 중</span>';
+  if (s === 'approved') return '<span class="badge badge-approved">승인 완료</span>';
+  return '-';
+}
+
+function toast(msg, type) {
+  const d = document.createElement('div');
+  d.className = `toast toast-${type}`;
+  d.textContent = msg;
+  document.body.appendChild(d);
+  setTimeout(() => { d.style.opacity='0'; d.style.transition='opacity .3s'; setTimeout(()=>d.remove(),300); }, 3000);
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function formatPhone(el) {
+  let v = el.value.replace(/[^0-9]/g, '');
+  if (v.length > 11) v = v.slice(0, 11);
+  if (v.length > 7) v = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7);
+  else if (v.length > 3) v = v.slice(0,3) + '-' + v.slice(3);
+  el.value = v;
+}
+
+function showErr(groupId, msg) {
+  const g = document.getElementById(groupId);
+  const errId = groupId.replace('fg-','err-').replace('fge-','erre-');
+  const e = document.getElementById(errId);
+  if (g) g.classList.add('has-error');
+  if (e) { e.textContent = msg; e.classList.add('show'); }
+}
+
+function clearErr(groupId) {
+  const g = document.getElementById(groupId);
+  const errId = groupId.replace('fg-','err-').replace('fge-','erre-');
+  const e = document.getElementById(errId);
+  if (g) g.classList.remove('has-error');
+  if (e) { e.textContent = ''; e.classList.remove('show'); }
+}
+
+function clearAllErr() {
+  document.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
+  document.querySelectorAll('.error-msg').forEach(e => { e.textContent = ''; e.classList.remove('show'); });
+}
+
+/* ══════════════════════════════════════
+   Tabs
+   ══════════════════════════════════════ */
+let currentTab = 0;
+function switchTab(idx) {
+  currentTab = idx;
+  document.querySelectorAll('.tab-item').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  if (idx === 0) renderAccounts();
+  else renderRequests();
+}
+
+/* ══════════════════════════════════════
+   Tab 1: 계정 현황
+   ══════════════════════════════════════ */
+const ACCT_PAGE_SIZE = 20;
+let acctPage = 1;
+let filterRole = '';
+let filterOrgId = '';
+let filterStatus = '';
+
+function getFilteredAccounts() {
+  let list = [...accts];
+  if (filterRole) list = list.filter(a => a.role === filterRole);
+  if (filterOrgId) list = list.filter(a => a.orgId === parseInt(filterOrgId));
+  if (filterStatus) list = list.filter(a => a.status === filterStatus);
+  // Sort: newest first by created
+  list.sort((a, b) => b.created.localeCompare(a.created));
+  return list;
+}
+
+function getStatusCounts() {
+  let list = [...accts];
+  if (filterRole) list = list.filter(a => a.role === filterRole);
+  if (filterOrgId) list = list.filter(a => a.orgId === parseInt(filterOrgId));
+  return {
+    all: list.length,
+    active: list.filter(a => a.status === 'active').length,
+    inactive: list.filter(a => a.status === 'inactive').length,
+    expired: list.filter(a => a.status === 'expired').length,
+  };
+}
+
+function renderStatusPills() {
+  const c = getStatusCounts();
+  const pills = document.getElementById('status-pills');
+  pills.innerHTML = `
+    <button class="filter-btn ${filterStatus===''?'active':''}" onclick="setStatusFilter('')">전체(${c.all})</button>
+    <button class="filter-btn ${filterStatus==='active'?'active':''}" onclick="setStatusFilter('active')">활성(${c.active})</button>
+    <button class="filter-btn ${filterStatus==='inactive'?'active':''}" onclick="setStatusFilter('inactive')">비활성(${c.inactive})</button>
+    <button class="filter-btn ${filterStatus==='expired'?'active':''}" onclick="setStatusFilter('expired')">만료(${c.expired})</button>
+  `;
+}
+
+function setStatusFilter(s) {
+  filterStatus = s;
+  acctPage = 1;
+  renderAccounts();
+}
+
+function onFilterChange() {
+  filterRole = document.getElementById('filter-role').value;
+  filterStatus = '';
+  acctPage = 1;
+  renderAccounts();
+}
+
+/* Filter org searchable dropdown */
+function openFilterOrgDropdown() {
+  const input = document.getElementById('filter-org-search');
+  if (document.getElementById('filter-org-id').value) {
+    input.value = '';
+    document.getElementById('filter-org-id').value = '';
+    filterOrgId = '';
+  }
+  input.select();
+  filterOrgDropdown();
+}
+
+function filterOrgDropdown() {
+  const q = document.getElementById('filter-org-search').value.trim().toLowerCase();
+  const dd = document.getElementById('filter-org-dropdown');
+  const list = orgs.slice();
+  const filtered = q ? list.filter(o => o.name.toLowerCase().includes(q)) : list;
+
+  let html = `<div class="fs-item ${!filterOrgId?'selected':''}" onclick="selectFilterOrg('')">전체 기관</div>`;
+  if (!filtered.length && q) {
+    html += '<div class="fs-empty">일치하는 기관이 없습니다</div>';
+  } else {
+    filtered.forEach(o => {
+      html += `<div class="fs-item ${filterOrgId==o.id?'selected':''}" onclick="selectFilterOrg(${o.id})">${o.name}</div>`;
+    });
+  }
+  dd.innerHTML = html;
+  dd.classList.add('open');
+}
+
+function selectFilterOrg(id) {
+  if (id) {
+    const o = getOrg(id);
+    document.getElementById('filter-org-search').value = o ? o.name : '';
+    document.getElementById('filter-org-id').value = id;
+    filterOrgId = String(id);
+  } else {
+    document.getElementById('filter-org-search').value = '';
+    document.getElementById('filter-org-id').value = '';
+    filterOrgId = '';
+  }
+  document.getElementById('filter-org-dropdown').classList.remove('open');
+  filterStatus = '';
+  acctPage = 1;
+  renderAccounts();
+}
+
+function renderAccounts() {
+  renderStatusPills();
+  const list = getFilteredAccounts();
+  const tbody = document.getElementById('acct-tbody');
+  const empty = document.getElementById('acct-empty');
+  const totalPages = Math.max(1, Math.ceil(list.length / ACCT_PAGE_SIZE));
+  if (acctPage > totalPages) acctPage = 1;
+
+  if (!list.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    empty.textContent = '해당 조건에 맞는 계정이 없습니다.';
+    document.getElementById('acct-pagination').innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const paged = list.slice((acctPage - 1) * ACCT_PAGE_SIZE, acctPage * ACCT_PAGE_SIZE);
+  let h = '';
+  paged.forEach((a, i) => {
+    const num = (acctPage - 1) * ACCT_PAGE_SIZE + i + 1;
+    const orgPath = a.role === 'ec' ? '-' : getOrgPath(a.orgId);
+    const canResend = a.status === 'inactive' || a.status === 'expired';
+    h += `<tr>
+      <td style="color:#94a3b8">${num}</td>
+      <td style="font-weight:600;color:#191919">${a.name}</td>
+      <td>${a.email}</td>
+      <td>${a.phone}</td>
+      <td>${roleBadge(a.role)}</td>
+      <td style="font-size:12px;color:#64748b">${orgPath}</td>
+      <td>${statusBadge(a.status)}</td>
+      <td style="font-size:12px;color:#64748b">${a.linkDate || '-'}</td>
+      <td style="font-size:12px;color:#64748b">${a.created}</td>
+      <td><div class="td-actions">
+        <button class="btn-edit" onclick="openEditModal(${a.id})">수정</button>
+        <button class="btn-delete" onclick="openDeleteModal(${a.id})">삭제</button>
+        ${canResend ? `<button class="btn-resend" onclick="handleResend(${a.id})">재발송</button>` : ''}
+      </div></td>
+    </tr>`;
+  });
+  tbody.innerHTML = h;
+
+  // Pagination
+  const pg = document.getElementById('acct-pagination');
+  if (totalPages <= 1) { pg.innerHTML = ''; return; }
+  let ph = `<button class="page-btn" onclick="goAcctPage(${acctPage-1})" ${acctPage<=1?'disabled':''}>‹</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    ph += `<button class="page-btn ${i===acctPage?'active':''}" onclick="goAcctPage(${i})">${i}</button>`;
+  }
+  ph += `<span class="page-info">${acctPage}/${totalPages}</span>`;
+  ph += `<button class="page-btn" onclick="goAcctPage(${acctPage+1})" ${acctPage>=totalPages?'disabled':''}>›</button>`;
+  pg.innerHTML = ph;
+}
+
+function goAcctPage(p) { acctPage = p; renderAccounts(); }
+
+/* ══════════════════════════════════════
+   Tab 2: 요청 관리
+   ══════════════════════════════════════ */
+const REQ_PAGE_SIZE = 20;
+let reqPage = 1;
+let reqFilter = '';
+
+function getFilteredRequests() {
+  let list = [...reqs];
+  if (reqFilter) list = list.filter(r => r.type === reqFilter);
+  // Sort: pending first (newest), then completed (newest)
+  list.sort((a, b) => {
+    if (a.status === 'pending' && b.status !== 'pending') return -1;
+    if (a.status !== 'pending' && b.status === 'pending') return 1;
+    return b.date.localeCompare(a.date);
+  });
+  return list;
+}
+
+function getReqCounts() {
+  const pending = reqs.filter(r => r.status === 'pending');
+  return {
+    all: pending.length,
+    pw_reset: pending.filter(r => r.type === 'pw_reset').length,
+    link_resend: pending.filter(r => r.type === 'link_resend').length,
+  };
+}
+
+function updateReqTabBadge() {
+  const n = reqs.filter(r => r.status === 'pending').length;
+  const badge = document.getElementById('req-tab-badge');
+  if (n > 0) { badge.textContent = n; badge.style.display = ''; }
+  else { badge.style.display = 'none'; }
+}
+
+function renderReqPills() {
+  const c = getReqCounts();
+  const pills = document.getElementById('req-pills');
+  pills.innerHTML = `
+    <button class="filter-btn ${reqFilter===''?'active':''}" onclick="setReqFilter('')">전체(${c.all})</button>
+    <button class="filter-btn ${reqFilter==='pw_reset'?'active':''}" onclick="setReqFilter('pw_reset')">PW 초기화(${c.pw_reset})</button>
+    <button class="filter-btn ${reqFilter==='link_resend'?'active':''}" onclick="setReqFilter('link_resend')">링크 재발송(${c.link_resend})</button>
+  `;
+  updateReqTabBadge();
+}
+
+function setReqFilter(f) {
+  reqFilter = f;
+  reqPage = 1;
+  renderRequests();
+}
+
+function renderRequests() {
+  renderReqPills();
+  const list = getFilteredRequests();
+  const tbody = document.getElementById('req-tbody');
+  const empty = document.getElementById('req-empty');
+  const totalPages = Math.max(1, Math.ceil(list.length / REQ_PAGE_SIZE));
+  if (reqPage > totalPages) reqPage = 1;
+
+  if (!list.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    empty.textContent = '해당 조건에 맞는 요청이 없습니다.';
+    document.getElementById('req-pagination').innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const paged = list.slice((reqPage - 1) * REQ_PAGE_SIZE, reqPage * REQ_PAGE_SIZE);
+  let h = '';
+  paged.forEach((r, i) => {
+    const num = (reqPage - 1) * REQ_PAGE_SIZE + i + 1;
+    const orgPath = r.orgId ? getOrgPath(r.orgId) : '-';
+    h += `<tr>
+      <td style="color:#94a3b8">${num}</td>
+      <td style="font-weight:600">${reqTypeName(r.type)}</td>
+      <td>${r.name}</td>
+      <td>${r.email}</td>
+      <td style="font-size:12px;color:#64748b">${orgPath}</td>
+      <td style="font-size:12px;color:#64748b">${r.date}</td>
+      <td>${reqStatusBadge(r.status)}</td>
+      <td>${r.status === 'pending' ? `<button class="btn-approve" onclick="handleApprove(${r.id})">승인</button>` : ''}</td>
+    </tr>`;
+  });
+  tbody.innerHTML = h;
+
+  // Pagination
+  const pg = document.getElementById('req-pagination');
+  if (totalPages <= 1) { pg.innerHTML = ''; return; }
+  let ph = `<button class="page-btn" onclick="goReqPage(${reqPage-1})" ${reqPage<=1?'disabled':''}>‹</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    ph += `<button class="page-btn ${i===reqPage?'active':''}" onclick="goReqPage(${i})">${i}</button>`;
+  }
+  ph += `<span class="page-info">${reqPage}/${totalPages}</span>`;
+  ph += `<button class="page-btn" onclick="goReqPage(${reqPage+1})" ${reqPage>=totalPages?'disabled':''}>›</button>`;
+  pg.innerHTML = ph;
+}
+
+function goReqPage(p) { reqPage = p; renderRequests(); }
+
+/* ══════════════════════════════════════
+   Modal: 계정 생성
+   ══════════════════════════════════════ */
+function resetCreateForm() {
+  document.getElementById('f-role').value = '';
+  document.getElementById('f-org-search').value = '';
+  document.getElementById('f-org-id').value = '';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-email').value = '';
+  document.getElementById('f-phone').value = '';
+  document.getElementById('org-row').style.display = '';
+  clearAllErr();
+}
+
+function onRoleChange() {
+  const role = document.getElementById('f-role').value;
+  const orgRow = document.getElementById('org-row');
+  // 응급콜센터는 소속기관 숨김
+  orgRow.style.display = role === 'ec' ? 'none' : '';
+  // 초기화
+  document.getElementById('f-org-search').value = '';
+  document.getElementById('f-org-id').value = '';
+  clearErr('fg-role');
+  clearErr('fg-org');
+}
+
+function getOrgCandidates(role) {
+  if (role === 'mgr1') return orgs.filter(o => o.tier === 1);
+  if (role === 'mgr2') return orgs.filter(o => o.tier === 2);
+  if (role === 'opr') return orgs.slice();
+  return [];
+}
+
+function filterModalOrgList() {
+  const role = document.getElementById('f-role').value;
+  const q = document.getElementById('f-org-search').value.trim().toLowerCase();
+  const dd = document.getElementById('modal-org-dropdown');
+  const list = getOrgCandidates(role);
+  const filtered = q ? list.filter(o => o.name.toLowerCase().includes(q)) : list;
+
+  if (!list.length) {
+    const tierMsg = role === 'mgr1' ? '1차' : role === 'mgr2' ? '2차' : '';
+    dd.innerHTML = `<div class="ss-empty">등록된 ${tierMsg ? tierMsg + ' ' : ''}기관이 없습니다. 기관관리에서 기관을 먼저 생성해주세요.</div>`;
+  } else if (!filtered.length) {
+    dd.innerHTML = '<div class="ss-empty">일치하는 기관이 없습니다</div>';
+  } else {
+    dd.innerHTML = filtered.map(o => {
+      const path = getOrgPath(o.id);
+      return `<div class="ss-item" onclick="selectModalOrg(${o.id})">
+        ${o.name}
+        ${o.parentId ? `<span class="ss-path">${path}</span>` : ''}
+      </div>`;
+    }).join('');
+  }
+  dd.classList.add('open');
+  document.getElementById('f-org-id').value = '';
+  clearErr('fg-org');
+}
+
+function openModalOrgDropdown() {
+  const input = document.getElementById('f-org-search');
+  if (document.getElementById('f-org-id').value) {
+    input.value = '';
+    document.getElementById('f-org-id').value = '';
+  }
+  input.select();
+  filterModalOrgList();
+}
+
+function selectModalOrg(id) {
+  const o = getOrg(id);
+  if (!o) return;
+  document.getElementById('f-org-search').value = o.name;
+  document.getElementById('f-org-id').value = id;
+  document.getElementById('modal-org-dropdown').classList.remove('open');
+  clearErr('fg-org');
+}
+
+function openCreateModal() {
+  resetCreateForm();
+  document.getElementById('modal-create-title').textContent = '계정 생성';
+  document.getElementById('modal-create-btn').textContent = '계정 생성';
+  document.getElementById('modal-create-btn').onclick = handleCreate;
+  openModal('modal-create');
+}
+
+function validateCreate() {
+  clearAllErr();
+  const role = document.getElementById('f-role').value;
+  const orgId = parseInt(document.getElementById('f-org-id').value) || null;
+  const name = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // 1. 역할 미선택
+  if (!role) { showErr('fg-role', '역할을 선택해주세요.'); return false; }
+
+  // 2. 소속기관 미선택 (응급콜센터 제외)
+  if (role !== 'ec' && !orgId) { showErr('fg-org', '소속 기관을 선택해주세요.'); return false; }
+
+  // 3. 해당 기관에 관리자 이미 존재 (기관관리자만)
+  if ((role === 'mgr1' || role === 'mgr2') && orgId) {
+    const existing = accts.find(a => a.role === role && a.orgId === orgId);
+    if (existing) {
+      showErr('fg-org', '해당 기관에 이미 관리자가 등록되어 있습니다.');
+      return false;
+    }
+  }
+
+  // 4. 이름 미입력
+  if (!name) { showErr('fg-name', '이름을 입력해주세요.'); return false; }
+
+  // 5. 이메일 미입력
+  if (!email) { showErr('fg-email', '이메일을 입력해주세요.'); return false; }
+
+  // 6. 이메일 형식
+  if (!emailRegex.test(email)) { showErr('fg-email', '올바른 이메일 형식을 입력해주세요.'); return false; }
+
+  // 7. 이메일 중복
+  if (accts.find(a => a.email === email)) { showErr('fg-email', '이미 등록된 이메일입니다.'); return false; }
+
+  // 8. 전화번호 미입력
+  if (!phone) { showErr('fg-phone', '전화번호를 입력해주세요.'); return false; }
+
+  return true;
+}
+
+function handleCreate() {
+  if (!validateCreate()) return;
+  const role = document.getElementById('f-role').value;
+  const orgId = role === 'ec' ? null : (parseInt(document.getElementById('f-org-id').value) || null);
+  const name = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const today = new Date().toISOString().slice(0, 10);
+
+  const newAcct = {
+    id: nextAcctId++,
+    name, email, phone, role, orgId,
+    status: 'inactive',
+    dept: '',
+    subRole: '',
+    linkDate: today,
+    created: today,
+  };
+  accts.push(newAcct);
+  closeModal('modal-create');
+  renderAccounts();
+  toast(`${name}(${ROLE_LABELS[role]}) 계정이 생성되었습니다. ${email}로 활성화 링크가 발송되었습니다.`, 'success');
+}
+
+/* ══════════════════════════════════════
+   Modal: 계정 수정
+   ══════════════════════════════════════ */
+let editAcctId = null;
+
+function openEditModal(id) {
+  editAcctId = id;
+  const a = accts.find(x => x.id === id);
+  if (!a) return;
+  clearAllErr();
+
+  document.getElementById('fe-email').value = a.email;
+  document.getElementById('fe-role').value = ROLE_LABELS[a.role] || a.role;
+  document.getElementById('fe-org').value = a.role === 'ec' ? '-' : getOrgPath(a.orgId);
+  document.getElementById('fe-name').value = a.name;
+  document.getElementById('fe-phone').value = a.phone;
+
+  // 기관운영자 전용 필드
+  const isOpr = a.role === 'opr';
+  document.getElementById('edit-dept-row').style.display = isOpr ? '' : 'none';
+  document.getElementById('edit-subrole-row').style.display = isOpr ? '' : 'none';
+  if (isOpr) {
+    document.getElementById('fe-dept').value = a.dept || '';
+    document.getElementById('fe-subrole').value = a.subRole || '';
+  }
+
+  openModal('modal-edit');
+}
+
+function handleEdit() {
+  clearAllErr();
+  const name = document.getElementById('fe-name').value.trim();
+  const phone = document.getElementById('fe-phone').value.trim();
+
+  if (!name) { showErr('fge-name', '이름을 입력해주세요.'); return; }
+  if (!phone) { showErr('fge-phone', '전화번호를 입력해주세요.'); return; }
+
+  const a = accts.find(x => x.id === editAcctId);
+  if (!a) return;
+  a.name = name;
+  a.phone = phone;
+  if (a.role === 'opr') {
+    a.dept = document.getElementById('fe-dept').value.trim();
+    a.subRole = document.getElementById('fe-subrole').value;
+  }
+
+  closeModal('modal-edit');
+  renderAccounts();
+  toast('계정 정보가 수정되었습니다.', 'success');
+}
+
+/* ══════════════════════════════════════
+   Modal: 계정 삭제
+   ══════════════════════════════════════ */
+let deleteAcctId = null;
+
+function openDeleteModal(id) {
+  deleteAcctId = id;
+  const a = accts.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('del-desc').innerHTML =
+    `정말로 <strong>${a.name}</strong>(${ROLE_LABELS[a.role]}) 계정을 삭제하시겠습니까?` +
+    `<br><span style="font-size:13px;color:#64748b">삭제된 계정은 복구할 수 없습니다.</span>`;
+  openModal('modal-delete');
+}
+
+function handleDelete() {
+  const idx = accts.findIndex(a => a.id === deleteAcctId);
+  if (idx < 0) return;
+  const a = accts[idx];
+  accts.splice(idx, 1);
+  closeModal('modal-delete');
+  renderAccounts();
+  toast(`${a.name} 계정이 삭제되었습니다.`, 'success');
+}
+
+/* ══════════════════════════════════════
+   링크 재발송
+   ══════════════════════════════════════ */
+function handleResend(id) {
+  const a = accts.find(x => x.id === id);
+  if (!a) return;
+  const today = new Date().toISOString().slice(0, 10);
+  a.linkDate = today;
+  a.status = 'inactive';
+  renderAccounts();
+  toast(`${a.email}로 활성화 링크가 재발송되었습니다.`, 'success');
+}
+
+/* ══════════════════════════════════════
+   요청 승인
+   ══════════════════════════════════════ */
+function handleApprove(id) {
+  const r = reqs.find(x => x.id === id);
+  if (!r) return;
+  r.status = 'approved';
+
+  if (r.type === 'pw_reset') {
+    toast(`${r.email}로 비밀번호 재설정 링크가 발송되었습니다.`, 'success');
+  } else if (r.type === 'link_resend') {
+    // Also update account status
+    const a = accts.find(x => x.email === r.email);
+    if (a) {
+      a.linkDate = new Date().toISOString().slice(0, 10);
+      a.status = 'inactive';
+    }
+    toast(`${r.email}로 활성화 링크가 재발송되었습니다.`, 'success');
+  }
+  renderRequests();
+  if (currentTab === 0) renderAccounts();
+}
+
+/* ══════════════════════════════════════
+   드롭다운 외부 클릭 닫기
+   ══════════════════════════════════════ */
+document.addEventListener('click', e => {
+  // Modal org dropdown
+  if (!e.target.closest('.searchable-select')) {
+    const dd = document.getElementById('modal-org-dropdown');
+    if (dd) dd.classList.remove('open');
+  }
+  // Filter org dropdown
+  if (!e.target.closest('.filter-searchable')) {
+    const dd = document.getElementById('filter-org-dropdown');
+    if (dd) dd.classList.remove('open');
+  }
+});
+
+/* ══════════════════════════════════════
+   Init
+   ══════════════════════════════════════ */
+renderAccounts();
+renderRequests();
+</script>
+</body>
+</html>
