@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MARKNOVA 문서 인덱스</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: #777;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid #eaeaea;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a1a2e;
+      line-height: 1.4;
+    }
+
+    .card-meta {
+      font-size: 0.82rem;
+      color: #999;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: #eef2ff;
+      color: #4361ee;
+      width: fit-content;
+    }
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.82rem;
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📂 MARKNOVA 문서 인덱스</h1>
+    <p>프로젝트 관련 문서를 아래에서 확인하세요.</p>
+  </header>
+
+  <div class="card-grid">
+
+    <a class="card" href="MARKNOVA_계정플로우_v3.0.html">
+      <div class="card-icon">🔄</div>
+      <div class="card-title">MARKNOVA 계정플로우 v3.0</div>
+      <div class="card-meta">계정 흐름 전체 다이어그램</div>
+      <span class="badge">v3.0</span>
+    </a>
+
+    <a class="card" href="MARKNOVA_계정플로우_상세_v3.0.html">
+      <div class="card-icon">🔍</div>
+      <div class="card-title">MARKNOVA 계정플로우 상세 v3.0</div>
+      <div class="card-meta">계정 흐름 상세 명세</div>
+      <span class="badge">v3.0</span>
+    </a>
+
+    <a class="card" href="MARKNOVA_로그인_기능명세_v1.0.html">
+      <div class="card-icon">📋</div>
+      <div class="card-title">MARKNOVA 로그인 기능명세 v1.0</div>
+      <div class="card-meta">로그인 기능 상세 명세서</div>
+      <span class="badge">v1.0</span>
+    </a>
+
+    <a class="card" href="MARKNOVA_로그인화면.html">
+      <div class="card-icon">🖥️</div>
+      <div class="card-title">MARKNOVA 로그인 화면</div>
+      <div class="card-meta">로그인 UI 화면 프로토타입</div>
+      <span class="badge">UI</span>
+    </a>
+
+  </div>
+
+  <footer>MARKNOVA · NovaCare</footer>
+
+</body>
+</html>
