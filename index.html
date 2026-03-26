@@ -5,20 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MARKNOVA 문서 인덱스</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
-      background: #f5f7fa;
+      background: #f0f2f5;
       color: #333;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       padding: 48px 24px;
     }
 
@@ -28,74 +21,149 @@
     }
 
     header h1 {
-      font-size: 2rem;
+      font-size: 1.9rem;
       font-weight: 700;
       color: #1a1a2e;
-      letter-spacing: -0.5px;
     }
 
     header p {
       margin-top: 8px;
       font-size: 0.95rem;
-      color: #777;
+      color: #888;
     }
 
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-      width: 100%;
-      max-width: 960px;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 28px 24px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      text-decoration: none;
-      color: inherit;
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      border: 1px solid #eaeaea;
+      gap: 32px;
     }
 
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    /* ── Section (folder) ── */
+    .section {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      overflow: hidden;
+      border: 1px solid #e4e6ea;
     }
 
-    .card-icon {
-      font-size: 2rem;
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 24px;
+      background: #1a1a2e;
+      color: #fff;
     }
 
-    .card-title {
+    .section-header .folder-icon {
+      font-size: 1.3rem;
+    }
+
+    .section-header .folder-name {
+      font-size: 0.78rem;
+      font-weight: 500;
+      opacity: 0.6;
+      font-family: 'Courier New', monospace;
+    }
+
+    .section-header .folder-title {
       font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .section-header .file-count {
+      margin-left: auto;
+      font-size: 0.75rem;
+      background: rgba(255,255,255,0.15);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── File cards ── */
+    .file-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 24px;
+      text-decoration: none;
+      color: inherit;
+      border-bottom: 1px solid #f0f2f5;
+      transition: background 0.15s ease;
+    }
+
+    .file-item:last-child {
+      border-bottom: none;
+    }
+
+    .file-item:hover {
+      background: #f7f8fc;
+    }
+
+    .file-item:hover .file-title {
+      color: #4361ee;
+    }
+
+    .file-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .file-info {
+      flex: 1;
+    }
+
+    .file-title {
+      font-size: 0.97rem;
       font-weight: 600;
       color: #1a1a2e;
-      line-height: 1.4;
+      transition: color 0.15s;
     }
 
-    .card-meta {
+    .file-desc {
       font-size: 0.82rem;
       color: #999;
+      margin-top: 3px;
+    }
+
+    .file-path {
+      font-size: 0.75rem;
+      color: #bbb;
+      font-family: 'Courier New', monospace;
+      margin-top: 2px;
     }
 
     .badge {
-      display: inline-block;
-      padding: 3px 10px;
+      flex-shrink: 0;
+      padding: 4px 12px;
       border-radius: 20px;
       font-size: 0.75rem;
-      font-weight: 500;
+      font-weight: 600;
       background: #eef2ff;
       color: #4361ee;
-      width: fit-content;
+    }
+
+    .badge.ui {
+      background: #fff0f6;
+      color: #c2185b;
+    }
+
+    .arrow {
+      color: #ccc;
+      font-size: 1rem;
+      flex-shrink: 0;
     }
 
     footer {
-      margin-top: 60px;
+      text-align: center;
+      margin-top: 48px;
       font-size: 0.82rem;
       color: #bbb;
     }
@@ -108,35 +176,81 @@
     <p>프로젝트 관련 문서를 아래에서 확인하세요.</p>
   </header>
 
-  <div class="card-grid">
+  <div class="container">
 
-    <a class="card" href="MARKNOVA_%EA%B3%84%EC%A0%95%ED%94%8C%EB%A1%9C%EC%9A%B0_v3.0.html">
-      <div class="card-icon">🔄</div>
-      <div class="card-title">MARKNOVA 계정플로우 v3.0</div>
-      <div class="card-meta">계정 흐름 전체 다이어그램</div>
-      <span class="badge">v3.0</span>
-    </a>
+    <!-- account/ -->
+    <div class="section">
+      <div class="section-header">
+        <span class="folder-icon">🗂</span>
+        <div>
+          <div class="folder-name">account/</div>
+          <div class="folder-title">계정 플로우</div>
+        </div>
+        <span class="file-count">2 files</span>
+      </div>
+      <div class="file-list">
 
-    <a class="card" href="MARKNOVA_%EA%B3%84%EC%A0%95%ED%94%8C%EB%A1%9C%EC%9A%B0_%EC%83%81%EC%84%B8_v3.0.html">
-      <div class="card-icon">🔍</div>
-      <div class="card-title">MARKNOVA 계정플로우 상세 v3.0</div>
-      <div class="card-meta">계정 흐름 상세 명세</div>
-      <span class="badge">v3.0</span>
-    </a>
+        <a class="file-item" href="account/flow-v3.0.html">
+          <span class="file-icon">🔄</span>
+          <div class="file-info">
+            <div class="file-title">계정플로우 v3.0</div>
+            <div class="file-desc">계정 흐름 전체 다이어그램</div>
+            <div class="file-path">account/flow-v3.0.html</div>
+          </div>
+          <span class="badge">v3.0</span>
+          <span class="arrow">›</span>
+        </a>
 
-    <a class="card" href="MARKNOVA_%EB%A1%9C%EA%B7%B8%EC%9D%B8_%EA%B8%B0%EB%8A%A5%EB%AA%85%EC%84%B8_v1.0.html">
-      <div class="card-icon">📋</div>
-      <div class="card-title">MARKNOVA 로그인 기능명세 v1.0</div>
-      <div class="card-meta">로그인 기능 상세 명세서</div>
-      <span class="badge">v1.0</span>
-    </a>
+        <a class="file-item" href="account/flow-detail-v3.0.html">
+          <span class="file-icon">🔍</span>
+          <div class="file-info">
+            <div class="file-title">계정플로우 상세 v3.0</div>
+            <div class="file-desc">계정 흐름 상세 명세</div>
+            <div class="file-path">account/flow-detail-v3.0.html</div>
+          </div>
+          <span class="badge">v3.0</span>
+          <span class="arrow">›</span>
+        </a>
 
-    <a class="card" href="MARKNOVA_%EB%A1%9C%EA%B7%B8%EC%9D%B8%ED%99%94%EB%A9%B4.html">
-      <div class="card-icon">🖥️</div>
-      <div class="card-title">MARKNOVA 로그인 화면</div>
-      <div class="card-meta">로그인 UI 화면 프로토타입</div>
-      <span class="badge">UI</span>
-    </a>
+      </div>
+    </div>
+
+    <!-- login/ -->
+    <div class="section">
+      <div class="section-header">
+        <span class="folder-icon">🗂</span>
+        <div>
+          <div class="folder-name">login/</div>
+          <div class="folder-title">로그인</div>
+        </div>
+        <span class="file-count">2 files</span>
+      </div>
+      <div class="file-list">
+
+        <a class="file-item" href="login/feature-spec-v1.0.html">
+          <span class="file-icon">📋</span>
+          <div class="file-info">
+            <div class="file-title">로그인 기능명세 v1.0</div>
+            <div class="file-desc">로그인 기능 상세 명세서</div>
+            <div class="file-path">login/feature-spec-v1.0.html</div>
+          </div>
+          <span class="badge">v1.0</span>
+          <span class="arrow">›</span>
+        </a>
+
+        <a class="file-item" href="login/screen.html">
+          <span class="file-icon">🖥️</span>
+          <div class="file-info">
+            <div class="file-title">로그인 화면</div>
+            <div class="file-desc">로그인 UI 화면 프로토타입</div>
+            <div class="file-path">login/screen.html</div>
+          </div>
+          <span class="badge ui">UI</span>
+          <span class="arrow">›</span>
+        </a>
+
+      </div>
+    </div>
 
   </div>
 
