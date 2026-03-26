@@ -4,85 +4,177 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MARKNOVA 문서 인덱스</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
-      background: #f0f2f5;
-      color: #333;
-      min-height: 100vh;
-      padding: 48px 24px;
+    :root {
+      --bg:          #f4f6fb;
+      --surface:     #ffffff;
+      --border:      #e8eaee;
+      --text-primary:   #111827;
+      --text-secondary: #6b7280;
+      --text-muted:     #9ca3af;
+      --accent:      #4f46e5;
+      --accent-light:#eef2ff;
+      --accent-hover:#4338ca;
+      --green:       #059669;
+      --green-light: #ecfdf5;
+      --pink:        #db2777;
+      --pink-light:  #fdf2f8;
+      --shadow-sm:   0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:   0 4px 16px rgba(0,0,0,0.08);
+      --radius:      14px;
     }
 
+    body {
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 56px 20px 80px;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
     header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 52px;
+    }
+
+    .header-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      background: var(--accent);
+      border-radius: 14px;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 14px rgba(79,70,229,0.35);
     }
 
     header h1 {
-      font-size: 1.9rem;
+      font-size: 1.75rem;
       font-weight: 700;
-      color: #1a1a2e;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+    }
+
+    header h1 span {
+      color: var(--accent);
     }
 
     header p {
       margin-top: 8px;
-      font-size: 0.95rem;
-      color: #888;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
     }
 
+    .header-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 20px;
+      padding: 8px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .header-meta .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    /* ── Container ── */
     .container {
-      max-width: 900px;
+      max-width: 820px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 28px;
     }
 
-    /* ── Section (folder) ── */
+    /* ── Section ── */
     .section {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
       overflow: hidden;
-      border: 1px solid #e4e6ea;
+      transition: box-shadow 0.2s;
+    }
+
+    .section:hover {
+      box-shadow: var(--shadow-md);
     }
 
     .section-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 18px 24px;
-      background: #1a1a2e;
-      color: #fff;
+      gap: 14px;
+      padding: 16px 24px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
     }
 
-    .section-header .folder-icon {
-      font-size: 1.3rem;
-    }
-
-    .section-header .folder-name {
-      font-size: 0.78rem;
+    .folder-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
       font-weight: 500;
-      opacity: 0.6;
-      font-family: 'Courier New', monospace;
+      color: var(--accent);
     }
 
-    .section-header .folder-title {
-      font-size: 1rem;
-      font-weight: 700;
+    .folder-chip-icon {
+      font-size: 0.95rem;
     }
 
-    .section-header .file-count {
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .section-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .file-count-badge {
       margin-left: auto;
-      font-size: 0.75rem;
-      background: rgba(255,255,255,0.15);
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--border);
       padding: 3px 10px;
       border-radius: 20px;
+      letter-spacing: 0.3px;
     }
 
-    /* ── File cards ── */
+    /* ── File items ── */
     .file-list {
       display: flex;
       flex-direction: column;
@@ -92,11 +184,23 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 18px 24px;
+      padding: 16px 24px;
       text-decoration: none;
       color: inherit;
-      border-bottom: 1px solid #f0f2f5;
-      transition: background 0.15s ease;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.12s ease;
+      position: relative;
+    }
+
+    .file-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: transparent;
+      transition: background 0.15s;
     }
 
     .file-item:last-child {
@@ -104,76 +208,126 @@
     }
 
     .file-item:hover {
-      background: #f7f8fc;
+      background: #fafbff;
+    }
+
+    .file-item:hover::before {
+      background: var(--accent);
     }
 
     .file-item:hover .file-title {
-      color: #4361ee;
+      color: var(--accent);
     }
 
-    .file-icon {
-      font-size: 1.6rem;
+    .file-item:hover .arrow {
+      color: var(--accent);
+      transform: translateX(3px);
+    }
+
+    /* Icon wrapper */
+    .icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
       flex-shrink: 0;
     }
 
-    .file-info {
-      flex: 1;
-    }
+    .icon-wrap.pink { background: var(--pink-light); }
+    .icon-wrap.green { background: var(--green-light); }
+
+    .file-info { flex: 1; min-width: 0; }
 
     .file-title {
-      font-size: 0.97rem;
+      font-size: 0.93rem;
       font-weight: 600;
-      color: #1a1a2e;
-      transition: color 0.15s;
+      color: var(--text-primary);
+      transition: color 0.12s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .file-desc {
-      font-size: 0.82rem;
-      color: #999;
-      margin-top: 3px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
     }
 
     .file-path {
-      font-size: 0.75rem;
-      color: #bbb;
-      font-family: 'Courier New', monospace;
-      margin-top: 2px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.71rem;
+      color: var(--text-muted);
+      margin-top: 3px;
     }
 
     .badge {
       flex-shrink: 0;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: #eef2ff;
-      color: #4361ee;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      background: var(--accent-light);
+      color: var(--accent);
     }
 
-    .badge.ui {
-      background: #fff0f6;
-      color: #c2185b;
+    .badge.green {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .badge.pink {
+      background: var(--pink-light);
+      color: var(--pink);
     }
 
     .arrow {
-      color: #ccc;
-      font-size: 1rem;
+      color: var(--text-muted);
+      font-size: 1.1rem;
       flex-shrink: 0;
+      transition: color 0.12s, transform 0.12s;
     }
 
+    /* ── Footer ── */
     footer {
       text-align: center;
-      margin-top: 48px;
-      font-size: 0.82rem;
-      color: #bbb;
+      margin-top: 56px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    footer strong {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      body { padding: 36px 16px 60px; }
+      header h1 { font-size: 1.4rem; }
+      .file-item { padding: 14px 18px; }
+      .section-header { padding: 14px 18px; }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>📂 MARKNOVA 문서 인덱스</h1>
-    <p>프로젝트 관련 문서를 아래에서 확인하세요.</p>
+    <div class="header-logo">📁</div>
+    <h1>MARK<span>NOVA</span> 문서 인덱스</h1>
+    <p>프로젝트 관련 기획 및 설계 문서 모음</p>
+    <div class="header-meta">
+      <span>📂 2 folders</span>
+      <span class="dot"></span>
+      <span>📄 4 files</span>
+      <span class="dot"></span>
+      <span>🏷 HTML</span>
+    </div>
   </header>
 
   <div class="container">
@@ -181,17 +335,20 @@
     <!-- account/ -->
     <div class="section">
       <div class="section-header">
-        <span class="folder-icon">🗂</span>
-        <div>
-          <div class="folder-name">account/</div>
-          <div class="folder-title">계정 플로우</div>
+        <div class="folder-chip">
+          <span class="folder-chip-icon">📂</span>
+          account/
         </div>
-        <span class="file-count">2 files</span>
+        <div>
+          <div class="section-title">계정 플로우</div>
+          <div class="section-desc">계정 생성 및 관리 흐름 문서</div>
+        </div>
+        <span class="file-count-badge">2 files</span>
       </div>
       <div class="file-list">
 
         <a class="file-item" href="account/flow-v3.0.html">
-          <span class="file-icon">🔄</span>
+          <div class="icon-wrap">🔄</div>
           <div class="file-info">
             <div class="file-title">계정플로우 v3.0</div>
             <div class="file-desc">계정 흐름 전체 다이어그램</div>
@@ -202,7 +359,7 @@
         </a>
 
         <a class="file-item" href="account/flow-detail-v3.0.html">
-          <span class="file-icon">🔍</span>
+          <div class="icon-wrap">🔍</div>
           <div class="file-info">
             <div class="file-title">계정플로우 상세 v3.0</div>
             <div class="file-desc">계정 흐름 상세 명세</div>
@@ -218,34 +375,37 @@
     <!-- login/ -->
     <div class="section">
       <div class="section-header">
-        <span class="folder-icon">🗂</span>
-        <div>
-          <div class="folder-name">login/</div>
-          <div class="folder-title">로그인</div>
+        <div class="folder-chip">
+          <span class="folder-chip-icon">📂</span>
+          login/
         </div>
-        <span class="file-count">2 files</span>
+        <div>
+          <div class="section-title">로그인</div>
+          <div class="section-desc">로그인 기능 명세 및 UI 문서</div>
+        </div>
+        <span class="file-count-badge">2 files</span>
       </div>
       <div class="file-list">
 
         <a class="file-item" href="login/feature-spec-v1.0.html">
-          <span class="file-icon">📋</span>
+          <div class="icon-wrap green">📋</div>
           <div class="file-info">
             <div class="file-title">로그인 기능명세 v1.0</div>
             <div class="file-desc">로그인 기능 상세 명세서</div>
             <div class="file-path">login/feature-spec-v1.0.html</div>
           </div>
-          <span class="badge">v1.0</span>
+          <span class="badge green">v1.0</span>
           <span class="arrow">›</span>
         </a>
 
         <a class="file-item" href="login/screen.html">
-          <span class="file-icon">🖥️</span>
+          <div class="icon-wrap pink">🖥️</div>
           <div class="file-info">
             <div class="file-title">로그인 화면</div>
             <div class="file-desc">로그인 UI 화면 프로토타입</div>
             <div class="file-path">login/screen.html</div>
           </div>
-          <span class="badge ui">UI</span>
+          <span class="badge pink">UI</span>
           <span class="arrow">›</span>
         </a>
 
@@ -254,7 +414,9 @@
 
   </div>
 
-  <footer>MARKNOVA · NovaCare</footer>
+  <footer>
+    <strong>MARKNOVA</strong> · NovaCare &nbsp;·&nbsp; marknova-novacare/test
+  </footer>
 
 </body>
 </html>
